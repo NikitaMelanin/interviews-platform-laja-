@@ -1,5 +1,5 @@
-import { Component, Inject } from '@angular/core';
-import {HubConnection, HubConnectionBuilder} from "@aspnet/signalr";
+import { Component } from '@angular/core';
+import { HubConnectionBuilder} from "@aspnet/signalr";
 
 @Component({
   selector: 'app-interview',
@@ -21,8 +21,13 @@ export class InterviewComponent {
             .withUrl("https://localhost:7070/interviews/hub")
             .build();
 
+          let fileId: string;
+          connection.on("setFileId", (id) => {
+            fileId = id;
+          })
+
           recorder.ondataavailable = async (ev) => {
-            await connection.invoke("AddBytes", InterviewComponent.ArrayBufferToBase64(await ev.data.arrayBuffer()))
+            await connection.invoke("AddBytes", fileId, InterviewComponent.ArrayBufferToBase64(await ev.data.arrayBuffer()))
           }
 
           window.onbeforeunload = async () => {

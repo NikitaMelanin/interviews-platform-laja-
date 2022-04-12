@@ -1,6 +1,15 @@
+using InterviewsPlatform_66bit.DTO;
 using InterviewsPlatform_66bit.Hubs;
+using MongoDB.Driver;
+using MongoDB.Driver.GridFS;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var client = new MongoClient("mongodb://localhost:27017/");
+var database = client.GetDatabase("InterviewsPortal");
+var bucket = new GridFSBucket(database);
+
+builder.Services.AddSingleton<IGridFSBucket>(_ => bucket);
 
 // Add services to the container.
 builder.Services.AddSignalR(o => o.EnableDetailedErrors = true);

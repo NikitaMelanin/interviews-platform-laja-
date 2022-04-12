@@ -1,7 +1,11 @@
-﻿namespace InterviewsPlatform_66bit.DTO;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+
+namespace InterviewsPlatform_66bit.DTO;
 
 public class VideoDTO
 {
-    public Guid Id { get; set; }
-    public List<byte> Bytes { get; set; }
+    public string Id { get; set; }
+
+    public byte[] Bytes { get; set; }
 }
