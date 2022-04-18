@@ -1,4 +1,5 @@
 using InterviewsPlatform_66bit.Hubs;
+using Microsoft.AspNetCore.SignalR;
 using MongoDB.Driver;
 using MongoDB.Driver.GridFS;
 
@@ -22,7 +23,10 @@ builder.Services.AddCors(o => o.AddPolicy("CorsPolicy", builder => {
 })); 
 
 builder.Services.AddControllersWithViews();
-
+builder.Services.Configure<HubOptions>(options =>
+{
+    options.MaximumReceiveMessageSize = null;
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
