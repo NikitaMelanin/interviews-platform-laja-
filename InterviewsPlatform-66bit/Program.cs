@@ -1,4 +1,3 @@
-using InterviewsPlatform_66bit.DTO;
 using InterviewsPlatform_66bit.Hubs;
 using MongoDB.Driver;
 using MongoDB.Driver.GridFS;
