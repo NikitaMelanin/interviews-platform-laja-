@@ -1,19 +1,19 @@
-import { HubConnection } from "@aspnet/signalr";
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
+import {SignalrVideoUploaderService} from "./signalrVideoUploader.service";
 
-@Injectable({
-    providedIn: 'root'
-})
+@Injectable()
 export class VideoSenderService {
-  public SendOnAvailable(recorder: MediaRecorder, connection: HubConnection, fileId: string): void {
+  constructor(private readonly uploader: SignalrVideoUploaderService) {}
+
+  public sendOnAvailable(recorder: MediaRecorder): void {
     recorder.ondataavailable = async (ev) => {
-      if (connection) {
-        await connection.invoke("AddBytes", fileId, this.ArrayBufferToBase64(await ev.data.arrayBuffer()))
-      }
+      this.uploader.sendBytes(VideoSenderService.arrayBufferToBase64(await ev.data.arrayBuffer()))
     }
+
+    this.uploader.start().then(() => recorder.start(10));
   }
 
-  private ArrayBufferToBase64(buffer: ArrayBuffer): string {
+  private static arrayBufferToBase64(buffer: ArrayBuffer): string {
     let binary = '';
     const bytes = new Uint8Array(buffer);
     const len = bytes.byteLength;

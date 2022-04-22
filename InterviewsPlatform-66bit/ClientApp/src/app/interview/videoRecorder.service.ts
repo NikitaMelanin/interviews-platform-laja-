@@ -1,11 +1,17 @@
-import { HubConnection } from "@aspnet/signalr";
-import { Injectable } from '@angular/core';
+import {Injectable, OnDestroy} from '@angular/core';
+import {VideoSenderService} from "./videoSender.service";
 
-@Injectable({
-    providedIn: 'root'
-})
-export class VideoRecorderService {
-    public Record(recorder: MediaRecorder): void {
-      recorder.start(10)
-    }
+@Injectable()
+export class VideoRecorderService implements OnDestroy{
+  private recorder!: MediaRecorder;
+  constructor(private readonly senderService: VideoSenderService) {}
+
+  public record(stream: MediaStream): void {
+    this.recorder = new MediaRecorder(stream);
+    this.senderService.sendOnAvailable(this.recorder);
   }
+
+  ngOnDestroy(): void {
+    this.recorder.stop()
+  }
+}
