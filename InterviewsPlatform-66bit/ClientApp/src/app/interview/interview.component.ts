@@ -43,7 +43,7 @@ export class InterviewComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     let video = this.receiverService.getVideo();
-    if (video !== null){
+    if (video){
       video.then((stream) => {
         this.video = stream;
         this.recorderService.record(stream);

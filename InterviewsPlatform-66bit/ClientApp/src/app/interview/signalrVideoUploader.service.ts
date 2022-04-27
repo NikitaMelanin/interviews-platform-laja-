@@ -4,17 +4,12 @@ import {HubConnection, HubConnectionBuilder} from "@aspnet/signalr";
 @Injectable()
 export class SignalrVideoUploaderService implements OnDestroy {
   private connection: HubConnection;
-  private fileId: string | undefined;
   private connected: boolean;
   constructor() {
     this.connected = false;
     this.connection = new HubConnectionBuilder()
       .withUrl("https://localhost:7070/interviews/hub")
       .build();
-
-    this.connection.on("setFileId", (id) => {
-      this.fileId = id;
-    })
   }
 
   start(): Promise<void>{
@@ -23,7 +18,7 @@ export class SignalrVideoUploaderService implements OnDestroy {
 
   sendBytes(bytes: string): void{
     if (this.connected) {
-      this.connection.invoke("AddBytes", this.fileId, bytes).catch(console.error);
+      this.connection.invoke("AddBytes", bytes).catch(console.error);
     }
   }
 

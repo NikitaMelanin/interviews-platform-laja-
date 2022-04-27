@@ -1,32 +1,34 @@
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using InterviewsPlatform_66bit.Hubs;
-using Microsoft.AspNetCore.SignalR;
-using MongoDB.Driver;
-using MongoDB.Driver.GridFS;
+using InterviewsPlatform_66bit.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var client = new MongoClient("mongodb://localhost:27017/");
-var database = client.GetDatabase("InterviewsPortal");
-var bucket = new GridFSBucket(database);
+builder.Host
+    .UseServiceProviderFactory(new AutofacServiceProviderFactory())
+    .ConfigureContainer<ContainerBuilder>(builder =>
+    {
+        builder.RegisterModule(new BasicRegModule());
+    })
+    .ConfigureServices(services =>
+    {
+        services.AddSignalR(o =>
+        {
+            o.EnableDetailedErrors = true;
+            o.MaximumReceiveMessageSize = null;
+        });
+        services.AddCors(o => o.AddPolicy("CorsPolicy", builder =>
+        {
+            builder
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials()
+                .WithOrigins("https://localhost:44423");
+        }));
+        services.AddControllersWithViews();
+    });
 
-builder.Services.AddSingleton<IGridFSBucket>(_ => bucket);
-
-// Add services to the container.
-builder.Services.AddSignalR(o => o.EnableDetailedErrors = true);
-
-builder.Services.AddCors(o => o.AddPolicy("CorsPolicy", builder => {  
-    builder  
-        .AllowAnyMethod()  
-        .AllowAnyHeader()  
-        .AllowCredentials()  
-        .WithOrigins("https://localhost:44423");  
-})); 
-
-builder.Services.AddControllersWithViews();
-builder.Services.Configure<HubOptions>(options =>
-{
-    options.MaximumReceiveMessageSize = null;
-});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

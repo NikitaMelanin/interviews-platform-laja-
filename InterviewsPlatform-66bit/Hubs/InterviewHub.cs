@@ -1,43 +1,36 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using InterviewsPlatform_66bit.DB;
+using Microsoft.AspNetCore.SignalR;
 using MongoDB.Driver.GridFS;
 
 namespace InterviewsPlatform_66bit.Hubs;
 
 public class InterviewHub : Hub
 {
-    private readonly IGridFSBucket bucket;
+    private readonly IDBResolver dbResolver;
+    private readonly string dbName;
 
-    public InterviewHub(IGridFSBucket bucket)
+    public InterviewHub(IDBResolver dbResolver, string dbName)
     {
-        this.bucket = bucket;
+        this.dbResolver = dbResolver;
+        this.dbName = dbName;
     }
 
-    private static GridFSUploadStream stream;
-
-    public void AddBytes(string interviewId, string base64Bytes)
+    public async void AddBytes(string base64Bytes)
     {
         var bytes = Convert.FromBase64String(base64Bytes);
-        stream.Write(bytes);
+        await ((GridFSUploadStream) Context.Items["stream"]!).WriteAsync(bytes);
     }
 
     public override Task OnConnectedAsync()
     {
-        stream = bucket.OpenUploadStream("interview");
-        Clients.Caller.SendCoreAsync("setFileId", new[] {stream.Id.ToString()});
+        var bucket = dbResolver.GetGridFsBucket(dbName);
+        Context.Items["stream"] = bucket.OpenUploadStream("interview");
         return base.OnConnectedAsync();
     }
-
-    // private static void Render()
-    // {
-    //     var videoBytes = Video.Bytes.ToArray();
-    //     using var fs = new FileStream(@"C:\Users\jexin\Desktop\video.mkv", FileMode.Create, FileAccess.Write);
-    //     fs.Write(videoBytes, 0, videoBytes.Length);
-    // }
-    //
+    
     public override Task OnDisconnectedAsync(Exception? exception)
     {
-        // Render();
-        stream.CloseAsync();
+        ((GridFSUploadStream) Context.Items["stream"]!).CloseAsync();
         return base.OnDisconnectedAsync(exception);
     }
 }
