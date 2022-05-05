@@ -1,4 +1,4 @@
-﻿import {Inject, Injectable, OnDestroy} from "@angular/core";
+﻿import {Injectable, OnDestroy} from "@angular/core";
 import {HubConnection, HubConnectionBuilder} from "@aspnet/signalr";
 
 @Injectable({ providedIn: "root" })
@@ -13,7 +13,7 @@ export class SignalrConnectorService implements OnDestroy {
   constructor() {
     this._connected = false;
     this.connection = new HubConnectionBuilder()
-      .withUrl("https://localhost:7070/interviews/hub")
+      .withUrl("/signalr/interview/hub")
       .build();
   }
 

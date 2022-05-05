@@ -22,6 +22,7 @@ public class InterviewHub : Hub
     public async void AddBytes(string base64Bytes)
     {
         var interviewId = (string?) Context.Items["interview-id"];
+        
         if (interviewId is null)
         {
             throw new InterviewIdNotConfigured();
@@ -34,14 +35,13 @@ public class InterviewHub : Hub
     public async Task<IEnumerable<string>> GetQuestions()
     {
         var interviewId = (string?) Context.Items["interview-id"];
-        
-        var filter = Builders<InterviewDTO>.Filter.Where(i => i.Id == ObjectId.Parse(interviewId));
-        
+
         if (interviewId is null)
         {
             throw new InterviewIdNotConfigured();
         }
         
+        var filter = Builders<InterviewDTO>.Filter.Where(i => i.Id == ObjectId.Parse(interviewId));
         return (await dbResolver.GetMongoCollection<InterviewDTO>(dbName, "interviews").FindAsync(filter)).Single().Questions;
     }
 
@@ -52,7 +52,7 @@ public class InterviewHub : Hub
         var collection = dbResolver.GetMongoCollection<InterviewDTO>(dbName, "interviews");
         var videoId = ((GridFSUploadStream) Context.Items["stream"]!).Id;
         var update = Builders<InterviewDTO>.Update.Set(i => i.InterviewVideoId, videoId);
-        collection.UpdateOneAsync(filter, update);
+        await collection.UpdateOneAsync(filter, update);
     }
     
     public override Task OnConnectedAsync()

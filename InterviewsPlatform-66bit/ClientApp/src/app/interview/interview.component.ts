@@ -7,6 +7,7 @@ import {SignalrVideoUploaderService} from "./services/signalrVideoUploader.servi
 import {SignalrConnectorService} from "./services/signalrConnector.service";
 import {SignalrQuestionsReceiver} from "./services/signalrQuestionsReceiver";
 import {ActivatedRoute, Router} from "@angular/router";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
 
 @Component({
   selector: 'app-interview',
@@ -23,17 +24,22 @@ import {ActivatedRoute, Router} from "@angular/router";
 
 export class InterviewComponent implements OnInit, OnDestroy {
   video: MediaStream | undefined;
+  currentQuestion: string | undefined;
+  buttonName: string;
 
   private seconds!: number;
   private subscribe!: Subscription;
   private interviewId!: string;
+  private questionsIterator!: IterableIterator<[number, string]>;
 
   constructor(private readonly recorderService: VideoRecorderService,
               private readonly videoReceiverService: VideoReceiverService,
               private readonly questionsReceiverService: SignalrQuestionsReceiver,
               private readonly connectorService: SignalrConnectorService,
               private readonly route: ActivatedRoute,
-              private readonly router: Router) {}
+              private readonly router: Router) {
+    this.buttonName = "Далее";
+  }
 
   ngOnDestroy(): void {
     if (this.video) {
@@ -69,12 +75,28 @@ export class InterviewComponent implements OnInit, OnDestroy {
         await this.connectorService.start(this.interviewId)
         this.recorderService.record(stream);
 
-        console.log(await this.questionsReceiverService.getQuestions())
+        this.questionsIterator = (await this.questionsReceiverService.getQuestions()).entries();
 
         const source = timer(1000, 1000);
         this.subscribe = source.subscribe(x => this.seconds = x);
       })
     }
     else { /* написать пользователю, что видео нужно разрешить */ }
+  }
+
+  nextQuestion(){
+    if (this.buttonName === "Далее"){
+      let question = this.questionsIterator.next();
+      if (question.done){
+        this.buttonName = "Завершить";
+        this.currentQuestion = "";
+      }
+      else{
+        this.currentQuestion = question.value[1];
+      }
+    }
+    else{
+      this.router.navigate(["/"]);
+    }
   }
 }

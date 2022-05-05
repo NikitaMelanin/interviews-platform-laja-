@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using InterviewsPlatform_66bit.Controllers;
 using InterviewsPlatform_66bit.DB;
 using InterviewsPlatform_66bit.Hubs;
 
@@ -14,5 +15,8 @@ public class BasicRegModule : Module
         builder.RegisterType<DBResolver>().As<IDBResolver>()
             .WithParameter("mongoConnectionString", "mongodb://localhost:27017/")
             .SingleInstance();
+
+        builder.RegisterType<InterviewController>().ExternallyOwned()
+            .WithParameter("dbName", "InterviewsPortal");
     }
 }
