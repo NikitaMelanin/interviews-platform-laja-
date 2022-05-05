@@ -1,5 +1,7 @@
 ﻿using InterviewsPlatform_66bit.DB;
+using InterviewsPlatform_66bit.DTO;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Bson;
 
 namespace InterviewsPlatform_66bit.Controllers;
 
@@ -15,10 +17,14 @@ public class InterviewController: Controller
         this.dbName = dbName;
     }
 
-    [HttpGet]
+    [HttpPost]
     [Produces("text/plain")]
-    public IActionResult CreateInterview()
+    public async Task<IActionResult> CreateInterview([FromBody] string[] questions)
     {
-        return Ok("works");
+        var collection = dbResolver.GetMongoCollection<InterviewDTO>(dbName, "interviews");
+        var id = ObjectId.GenerateNewId();
+        var interview = new InterviewDTO {Id = id, Questions = questions};
+        await collection.InsertOneAsync(interview);
+        return Ok(id);
     }
 }
