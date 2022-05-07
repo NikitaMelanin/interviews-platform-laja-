@@ -1,13 +1,16 @@
 <div class="text-center">
   <div id="container">
-    <video autoplay id="videoElement" [srcObject]="video">
+    <video autoplay id="videoElement" [srcObject]="video" >
 
     </video>
   </div>
   <div id="questions">
     <div id="question">{{currentQuestion}}</div>
-    <button (click)="nextQuestion()">{{buttonName}}</button>
+    <section>
+      <div class="buttonName">
+        <button mat-stroked-button (click)="nextQuestion()">{{buttonName}}</button>
+      </div>
+    </section>
   </div>
 </div>
-
 

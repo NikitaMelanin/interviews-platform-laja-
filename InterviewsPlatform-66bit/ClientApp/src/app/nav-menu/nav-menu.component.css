@@ -16,3 +16,30 @@ html {
 .box-shadow {
   box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
 }
+
+header {
+  width: 100%;
+  display: block;
+  overflow: hidden;
+}
+
+header a {
+  box-sizing: border-box;
+  border-radius: 4px;
+  padding: 10px;
+}
+
+header a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+.navbar-nav {
+  align-items: center;
+  padding: 10px;
+  display: flex;
+}
+
+header a:active {
+  background-color: rgb(145, 150, 153);
+}

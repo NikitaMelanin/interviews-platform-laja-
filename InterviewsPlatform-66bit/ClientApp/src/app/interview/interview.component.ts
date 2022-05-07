@@ -12,6 +12,7 @@ import {HttpClient, HttpHeaders} from "@angular/common/http";
 @Component({
   selector: 'app-interview',
   templateUrl: './interview.component.html',
+  styleUrls: ['./interview.component.css'],
   providers: [
     VideoRecorderService,
     VideoSenderService,
