@@ -5,7 +5,7 @@ using MongoDB.Bson;
 
 namespace InterviewsPlatform_66bit.Controllers;
 
-[Route("/interview")]
+[Route("/interviews")]
 public class InterviewController: Controller
 {
     private readonly IDBResolver dbResolver;

@@ -13,7 +13,7 @@ export class SignalrConnectorService implements OnDestroy {
   constructor() {
     this._connected = false;
     this.connection = new HubConnectionBuilder()
-      .withUrl("/signalr/interview/hub")
+      .withUrl("/signalr/interviews/hub")
       .build();
   }
 

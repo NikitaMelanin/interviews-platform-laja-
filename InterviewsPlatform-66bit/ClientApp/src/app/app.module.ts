@@ -22,7 +22,7 @@ import {InterviewComponent} from './interview/interview.component';
     FormsModule,
     RouterModule.forRoot([
       {path: '', component: HomeComponent, pathMatch: 'full'},
-      {path: 'interview/:id', component: InterviewComponent, pathMatch: 'full'},
+      {path: 'interviews/:id', component: InterviewComponent, pathMatch: 'full'},
     ])
   ],
   providers: [],

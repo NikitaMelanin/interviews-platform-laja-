@@ -48,7 +48,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.MapControllers();
-app.MapHub<InterviewHub>("/interview/hub");
+app.MapHub<InterviewHub>("/interviews/hub");
 
 app.UseCors("CorsPolicy");
 
