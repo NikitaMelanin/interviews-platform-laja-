@@ -1,16 +1,20 @@
 <div class="text-center">
   <div id="container">
     <video autoplay id="videoElement" [srcObject]="video" >
-
     </video>
   </div>
-  <div id="questions">
-    <div id="question">{{currentQuestion}}</div>
-    <section>
-      <div class="buttonName">
-        <button mat-stroked-button (click)="nextQuestion()">{{buttonName}}</button>
-      </div>
-    </section>
+
+<div class="questions">
+  <div class="currentQuestion">
+    <mat-card>
+      <mat-card-title>
+        {{currentQuestion}}
+      </mat-card-title>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Nemo molestiae quibusdam optio recusandae, quis officia iusto quae ad nihil quaerat eum minima amet commodi laborum consequatur nesciunt porro aliquam? Perferendis.</p>
+    </mat-card>
   </div>
 </div>
-
+      <div class="buttonName">
+        <button mat-raised-button (click)="nextQuestion()">{{buttonName}}</button>
+      </div>
+</div>

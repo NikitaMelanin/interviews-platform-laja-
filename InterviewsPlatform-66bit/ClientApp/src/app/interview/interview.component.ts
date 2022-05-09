@@ -1,4 +1,4 @@
-import {Component, HostListener, OnDestroy, OnInit} from '@angular/core';
+import {Component, HostListener, NgModule, OnDestroy, OnInit} from '@angular/core';
 import {Subscription, timer} from 'rxjs';
 import {VideoRecorderService} from "./services/videoRecorder.service";
 import {VideoSenderService} from "./services/videoSender.service";
@@ -8,6 +8,10 @@ import {SignalrConnectorService} from "./services/signalrConnector.service";
 import {SignalrQuestionsReceiver} from "./services/signalrQuestionsReceiver";
 import {ActivatedRoute, Router} from "@angular/router";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {MatButtonModule} from '@angular/material/button';
+import {MatCardModule} from '@angular/material/card';
+import {MatCardHarness} from '@angular/material/card/testing';
+import {HarnessLoader, parallel} from '@angular/cdk/testing';
 
 @Component({
   selector: 'app-interview',
@@ -19,9 +23,13 @@ import {HttpClient, HttpHeaders} from "@angular/common/http";
     VideoReceiverService,
     SignalrVideoUploaderService,
     SignalrConnectorService,
-    SignalrQuestionsReceiver
+    SignalrQuestionsReceiver,
+    MatButtonModule,
+    MatCardModule
   ]
+
 })
+
 
 export class InterviewComponent implements OnInit, OnDestroy {
   video: MediaStream | undefined;
@@ -81,8 +89,7 @@ export class InterviewComponent implements OnInit, OnDestroy {
         const source = timer(1000, 1000);
         this.subscribe = source.subscribe(x => this.seconds = x);
       })
-    }
-    else { /* написать пользователю, что видео нужно разрешить */ }
+    } else { /* написать пользователю, что видео нужно разрешить */ }
   }
 
   nextQuestion(){
@@ -91,13 +98,11 @@ export class InterviewComponent implements OnInit, OnDestroy {
       if (question.done){
         this.buttonName = "Завершить";
         this.currentQuestion = "";
+      } else {
+          this.currentQuestion = question.value[1];
       }
-      else{
-        this.currentQuestion = question.value[1];
-      }
-    }
-    else{
-      this.router.navigate(["/"]);
+    } else {
+        this.router.navigate(["/"]);
     }
   }
 }

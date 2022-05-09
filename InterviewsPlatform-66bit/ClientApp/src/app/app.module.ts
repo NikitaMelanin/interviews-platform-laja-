@@ -8,6 +8,9 @@ import {AppComponent} from './app.component';
 import {NavMenuComponent} from './nav-menu/nav-menu.component';
 import {HomeComponent} from './home/home.component';
 import {InterviewComponent} from './interview/interview.component';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import {MatButtonModule} from '@angular/material/button';
+import {MatCardModule} from '@angular/material/card';
 
 @NgModule({
   declarations: [
@@ -19,11 +22,14 @@ import {InterviewComponent} from './interview/interview.component';
   imports: [
     BrowserModule.withServerTransition({appId: 'ng-cli-universal'}),
     HttpClientModule,
+    MatButtonModule,
+    MatCardModule,
     FormsModule,
     RouterModule.forRoot([
       {path: '', component: HomeComponent, pathMatch: 'full'},
       {path: 'interviews/:id', component: InterviewComponent, pathMatch: 'full'},
-    ])
+    ]),
+    NoopAnimationsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
