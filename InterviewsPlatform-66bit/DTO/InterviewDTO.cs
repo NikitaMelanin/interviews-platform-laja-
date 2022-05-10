@@ -1,14 +1,18 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Bson.Serialization.IdGenerators;
 
 namespace InterviewsPlatform_66bit.DTO;
 
 public class InterviewDTO
 {
     [BsonId]
-    public ObjectId Id { get; set; }
+    [BsonRepresentation(BsonType.ObjectId)]
+    public string Id { get; set; }
 
-    public string[] Questions { get; set; }
+    [BsonRepresentation(BsonType.ObjectId)]
+    public string InterviewVideoId { get; set; }
     
-    public ObjectId InterviewVideoId { get; set; }
+    [BsonRepresentation(BsonType.ObjectId)]
+    public string InterviewScreenVideoId { get; set; }
 }

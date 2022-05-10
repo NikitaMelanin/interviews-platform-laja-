@@ -16,7 +16,10 @@ public class BasicRegModule : Module
             .WithParameter("mongoConnectionString", "mongodb://localhost:27017/")
             .SingleInstance();
 
-        builder.RegisterType<InterviewController>().ExternallyOwned()
+        // builder.RegisterType<InterviewController>().ExternallyOwned()
+        //     .WithParameter("dbName", "InterviewsPortal");
+        
+        builder.RegisterType<VacanciesController>().ExternallyOwned()
             .WithParameter("dbName", "InterviewsPortal");
     }
 }
