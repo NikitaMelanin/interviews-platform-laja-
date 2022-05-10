@@ -9,10 +9,13 @@ public class InterviewDTO
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]
     public string Id { get; set; }
-
-    [BsonRepresentation(BsonType.ObjectId)]
-    public string InterviewVideoId { get; set; }
     
     [BsonRepresentation(BsonType.ObjectId)]
-    public string InterviewScreenVideoId { get; set; }
+    public string IntervieweeId { get; set; }
+    
+    [BsonRepresentation(BsonType.ObjectId)]
+    public string VideoId { get; set; }
+    
+    [BsonRepresentation(BsonType.ObjectId)]
+    public string ScreenVideoId { get; set; }
 }

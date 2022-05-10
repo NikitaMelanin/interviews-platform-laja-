@@ -1,5 +1,7 @@
 ﻿using InterviewsPlatform_66bit.DB;
+using InterviewsPlatform_66bit.DTO;
 using Microsoft.AspNetCore.SignalR;
+using MongoDB.Driver;
 using MongoDB.Driver.GridFS;
 
 namespace InterviewsPlatform_66bit.Hubs;
@@ -27,6 +29,22 @@ public class InterviewHub : Hub
         await ((GridFSUploadStream) Context.Items["screenVideoStream"]!).WriteAsync(bytes);
     }
 
+    public async void AttachStreamsToInterview(string interviewId)
+    {
+        var collection = dbResolver.GetMongoCollection<InterviewDTO>(dbName, "interviews");
+        
+        var videoStreamId = ((GridFSUploadStream) Context.Items["videoStream"]!).Id;
+        var screenVideoStreamId = ((GridFSUploadStream) Context.Items["screenVideoStream"]!).Id;
+
+        var filter = Builders<InterviewDTO>.Filter.Eq(i => i.Id, interviewId);
+
+        var update = Builders<InterviewDTO>.Update
+            .Set(i => i.VideoId, videoStreamId.ToString())
+            .Set(i => i.ScreenVideoId, screenVideoStreamId.ToString());
+
+        await collection.UpdateOneAsync(filter, update);
+    }
+
     public override Task OnConnectedAsync()
     {
         var bucket = dbResolver.GetGridFsBucket(dbName);
@@ -38,10 +56,11 @@ public class InterviewHub : Hub
         return base.OnConnectedAsync();
     }
 
-    public override Task OnDisconnectedAsync(Exception? exception)
+    public override async Task OnDisconnectedAsync(Exception? exception)
     {
-        ((GridFSUploadStream) Context.Items["videoStream"]!).CloseAsync();
-        ((GridFSUploadStream) Context.Items["screenVideoStream"]!).CloseAsync();
-        return base.OnDisconnectedAsync(exception);
+        await ((GridFSUploadStream) Context.Items["videoStream"]!).CloseAsync();
+        await ((GridFSUploadStream) Context.Items["screenVideoStream"]!).CloseAsync();
+
+        await base.OnDisconnectedAsync(exception);
     }
 }
