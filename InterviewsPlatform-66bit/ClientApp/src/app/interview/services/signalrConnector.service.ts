@@ -21,7 +21,7 @@ export class SignalrConnectorService implements OnDestroy {
     if (!this._connected) {
       return this.connection.start().catch(console.error).then(async () => {
         this._connected = true
-        await this.invoke("StartUploading", interviewId)
+        await this.invoke("AttachStreamsToInterview", interviewId)
       });
     }
 

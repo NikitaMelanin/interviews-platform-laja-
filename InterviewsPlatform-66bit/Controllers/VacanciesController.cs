@@ -60,6 +60,7 @@ public class VacanciesController : Controller
 
     [HttpPatch]
     [Route("{id}/interviews")]
+    [Produces("application/json")]
     public async Task<IActionResult> AddInterview(string id, [FromBody] string interviewId)
     {
         var collection = dbResolver.GetMongoCollection<VacancyDTO>(dbName, "vacancies");
