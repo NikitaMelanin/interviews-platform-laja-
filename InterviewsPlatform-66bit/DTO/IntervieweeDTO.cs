@@ -16,4 +16,16 @@ public class IntervieweeDTO
     public string Phone { get; set; }
     
     public string Email { get; set; }
+    
+    public string[] Interviews { get; set; }
+
+    public IntervieweeDTO(IntervieweePostDTO postDto)
+    {
+        Id = ObjectId.GenerateNewId().ToString();
+        Name = postDto.Name;
+        Surname = postDto.Surname;
+        Phone = postDto.Phone;
+        Email = postDto.Email;
+        Interviews = Array.Empty<string>();
+    }
 }
