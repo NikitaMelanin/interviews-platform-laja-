@@ -12,6 +12,7 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatCardModule} from '@angular/material/card';
 import {MatCardHarness} from '@angular/material/card/testing';
 import {HarnessLoader, parallel} from '@angular/cdk/testing';
+import {ScreenVideoRecieverService} from "./services/screenVideoReciever.service";
 
 @Component({
   selector: 'app-interview',
@@ -21,6 +22,7 @@ import {HarnessLoader, parallel} from '@angular/cdk/testing';
     VideoRecorderService,
     VideoSenderService,
     VideoReceiverService,
+    ScreenVideoRecieverService,
     SignalrVideoUploaderService,
     SignalrConnectorService,
     SignalrQuestionsReceiver,
@@ -33,6 +35,7 @@ import {HarnessLoader, parallel} from '@angular/cdk/testing';
 
 export class InterviewComponent implements OnInit, OnDestroy {
   video: MediaStream | undefined;
+  screenVideo: MediaStream | undefined;
   currentQuestion: string | undefined;
   buttonName: string;
 
@@ -43,6 +46,7 @@ export class InterviewComponent implements OnInit, OnDestroy {
 
   constructor(private readonly recorderService: VideoRecorderService,
               private readonly videoReceiverService: VideoReceiverService,
+              private readonly screenReceiverService: ScreenVideoRecieverService,
               private readonly questionsReceiverService: SignalrQuestionsReceiver,
               private readonly connectorService: SignalrConnectorService,
               private readonly route: ActivatedRoute,
@@ -76,6 +80,11 @@ export class InterviewComponent implements OnInit, OnDestroy {
 
     this.interviewId = this.route.snapshot.paramMap.get("id")!;
 
+    this.videoFunction();
+    this.screenFunction();
+  }
+
+  videoFunction(): void {
     let video = this.videoReceiverService.getVideo();
 
     if (video) {
@@ -90,6 +99,23 @@ export class InterviewComponent implements OnInit, OnDestroy {
         this.subscribe = source.subscribe(x => this.seconds = x);
       })
     } else { /* написать пользователю, что видео нужно разрешить */ }
+  }
+
+  screenFunction(): void {
+    let screenVideo = this.screenReceiverService.getVideo();
+
+    if (screenVideo) {
+      screenVideo.then(async (stream) => {
+        this.screenVideo = stream;
+        await this.connectorService.start(this.interviewId)
+        this.recorderService.record(stream);
+
+        this.questionsIterator = (await this.questionsReceiverService.getQuestions()).entries();
+
+        const source = timer(1000, 1000);
+        this.subscribe = source.subscribe(x => this.seconds = x);
+      })
+    }
   }
 
   nextQuestion(){
