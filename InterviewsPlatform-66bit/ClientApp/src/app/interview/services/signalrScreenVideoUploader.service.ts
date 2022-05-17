@@ -3,8 +3,7 @@ import {SignalrConnectorService} from "./signalrConnector.service";
 
 @Injectable()
 export class SignalrScreenVideoUploaderService {
-  constructor(private readonly connectorService: SignalrConnectorService) {
-  }
+  constructor(private readonly connectorService: SignalrConnectorService) {}
 
   sendBytes(bytes: string): void {
     if (this.connectorService.connected) {

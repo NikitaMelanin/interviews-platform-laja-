@@ -1,4 +1,4 @@
-import {Component, HostListener, NgModule, OnDestroy, OnInit} from '@angular/core';
+import {Component, HostListener, OnDestroy, OnInit} from '@angular/core';
 import {Subscription, timer} from 'rxjs';
 import {VideoRecorderService} from "./services/videoRecorder.service";
 import {VideoSenderService} from "./services/videoSender.service";
@@ -7,12 +7,9 @@ import {SignalrVideoUploaderService} from "./services/signalrVideoUploader.servi
 import {SignalrConnectorService} from "./services/signalrConnector.service";
 import {SignalrQuestionsReceiver} from "./services/signalrQuestionsReceiver";
 import {ActivatedRoute, Router} from "@angular/router";
-import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {MatButtonModule} from '@angular/material/button';
 import {MatCardModule} from '@angular/material/card';
-import {MatCardHarness} from '@angular/material/card/testing';
-import {HarnessLoader, parallel} from '@angular/cdk/testing';
-import {ScreenVideoRecieverService} from "./services/screenVideoReciever.service";
+import {ScreenVideoReceiverService} from "./services/screenVideoReceiver.service";
 
 @Component({
   selector: 'app-interview',
@@ -22,7 +19,7 @@ import {ScreenVideoRecieverService} from "./services/screenVideoReciever.service
     VideoRecorderService,
     VideoSenderService,
     VideoReceiverService,
-    ScreenVideoRecieverService,
+    ScreenVideoReceiverService,
     SignalrVideoUploaderService,
     SignalrConnectorService,
     SignalrQuestionsReceiver,
@@ -44,9 +41,10 @@ export class InterviewComponent implements OnInit, OnDestroy {
   private interviewId!: string;
   private questionsIterator!: IterableIterator<[number, string]>;
 
-  constructor(private readonly recorderService: VideoRecorderService,
+  constructor(private readonly videoRecorderService: VideoRecorderService,
+              private readonly screenVideoRecorderService: VideoRecorderService,
               private readonly videoReceiverService: VideoReceiverService,
-              private readonly screenReceiverService: ScreenVideoRecieverService,
+              private readonly screenReceiverService: ScreenVideoReceiverService,
               private readonly questionsReceiverService: SignalrQuestionsReceiver,
               private readonly connectorService: SignalrConnectorService,
               private readonly route: ActivatedRoute,
@@ -75,47 +73,36 @@ export class InterviewComponent implements OnInit, OnDestroy {
       }
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.router.routeReuseStrategy.shouldReuseRoute = () => false;
 
     this.interviewId = this.route.snapshot.paramMap.get("id")!;
 
-    this.videoFunction();
-    this.screenFunction();
-  }
+    let video = await this.videoReceiverService.getVideo();
+    let screenVideo = await this.screenReceiverService.getVideo();
 
-  videoFunction(): void {
-    let video = this.videoReceiverService.getVideo();
+    if (video && screenVideo){
+      await this.connectorService.start(this.interviewId)
 
-    if (video) {
-      video.then(async (stream) => {
-        this.video = stream;
-        await this.connectorService.start(this.interviewId)
-        this.recorderService.record(stream);
+      this.RecordVideo(video);
+      this.RecordScreen(screenVideo)
 
-        this.questionsIterator = (await this.questionsReceiverService.getQuestions()).entries();
-
-        const source = timer(1000, 1000);
-        this.subscribe = source.subscribe(x => this.seconds = x);
-      })
-    } else { /* написать пользователю, что видео нужно разрешить */ }
-  }
-
-  screenFunction(): void {
-    let screenVideo = this.screenReceiverService.getVideo();
-
-    if (screenVideo) {
-      screenVideo.then(async (stream) => {
-        this.screenVideo = stream;
-        await this.connectorService.start(this.interviewId)
-        this.recorderService.record(stream);
-
-        this.questionsIterator = (await this.questionsReceiverService.getQuestions()).entries();
-
-        const source = timer(1000, 1000);
-        this.subscribe = source.subscribe(x => this.seconds = x);
-      })
+      this.questionsIterator = (await this.questionsReceiverService.getQuestions()).entries();
+      const source = timer(1000, 1000);
+      this.subscribe = source.subscribe(x => this.seconds = x);
     }
+  }
+
+  RecordVideo(video: MediaStream): void {
+    this.video = video;
+
+    this.videoRecorderService.record(video);
+  }
+
+  RecordScreen(screenVideo: MediaStream): void {
+    this.screenVideo = screenVideo
+
+    this.screenVideoRecorderService.record(screenVideo);
   }
 
   nextQuestion(){

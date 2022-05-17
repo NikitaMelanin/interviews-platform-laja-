@@ -7,7 +7,8 @@ export class SignalrVideoUploaderService {
 
   sendBytes(bytes: string): void {
     if (this.connectorService.connected) {
-      this.connectorService.invoke("AddVideoBytes", bytes).catch(console.error);
+      this.connectorService.invoke("AddVideoBytes", bytes)
+        .catch(console.error);
     }
   }
 }

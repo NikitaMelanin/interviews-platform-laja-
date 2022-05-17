@@ -1,9 +1,9 @@
 ﻿import {Injectable} from "@angular/core";
 
 @Injectable()
-export class ScreenVideoRecieverService {
+export class ScreenVideoReceiverService {
   getVideo(): Promise<MediaStream> | null {
-    if (ScreenVideoRecieverService.hasDisplayMedia()) {
+    if (ScreenVideoReceiverService.hasDisplayMedia()) {
       return navigator.mediaDevices.getDisplayMedia({video: true});
     }
 
