@@ -21,5 +21,8 @@ public class BasicRegModule : Module
         
         builder.RegisterType<VacanciesController>().ExternallyOwned()
             .WithParameter("dbName", "InterviewsPortal");
+        
+        builder.RegisterType<VacanciesInterviewsController>().ExternallyOwned()
+            .WithParameter("dbName", "InterviewsPortal");
     }
 }

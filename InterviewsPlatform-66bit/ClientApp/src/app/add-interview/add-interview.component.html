@@ -1,0 +1,24 @@
+<div class="container">
+  <form [formGroup]="myForm" (submit)="onSubmit()">
+    <div class="mb-3">
+      <label for="name" class="form-label">Title</label>
+      <input type="text"  class="form-control" formControlName="name" id="name">
+    </div>
+    <div class="mb-3">
+      <label for="surname" class="form-label">Surname</label>
+      <input type="text" class="form-control" formControlName="surname" id="surname">
+    </div>
+    <div class="mb-3">
+      <label for="phone" class="form-label">Phone</label>
+      <input type="text" class="form-control" formControlName="phone" id="phone">
+    </div>
+    <div class="mb-3">
+      <label for="email" class="form-label">Email</label>
+      <input type="email" class="form-control" formControlName="email" id="email">
+    </div>
+    <button type="submit" class="btn btn-outline-success">
+      <i class="bi bi-pen"></i>
+      Save
+    </button>
+  </form>
+</div>
