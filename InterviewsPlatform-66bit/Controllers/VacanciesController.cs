@@ -49,7 +49,12 @@ public class VacanciesController : Controller
 
         var filter = Builders<VacancyDTO>.Filter.Eq(v => v.Id, id);
 
-        await collection.UpdateOneAsync(filter, update);
+        var res = await collection.UpdateOneAsync(filter, update);
+
+        if (!res.IsAcknowledged || !res.IsModifiedCountAvailable)
+        {
+            return NotFound(new {errorText = "Bad id"});
+        }
         
         Response.Headers.Location = $"/vacancies/{id}";
 
