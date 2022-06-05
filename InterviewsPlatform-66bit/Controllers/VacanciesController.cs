@@ -112,6 +112,15 @@ public class VacanciesController : Controller
                 return Forbid();
             }
 
+            var interviewsCollection = dbResolver.GetMongoCollection<InterviewDTO>(dbName, "interviews");
+            
+            var builder = Builders<InterviewDTO>.Filter;
+            var deleteFilter = vacancy.Interviews.Aggregate(
+                builder.Empty,
+                (current, interviewId) => current & builder.Eq(i => i.Id, interviewId));
+
+            await interviewsCollection.DeleteManyAsync(deleteFilter);
+
             await collection.DeleteOneAsync(filter);
 
             return NoContent();
