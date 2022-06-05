@@ -1,9 +1,8 @@
-using Microsoft.AspNetCore.Mvc;
-
 namespace InterviewsPlatform_66bit.DTO;
 
-public class TimeStop
+public class TimeStopDTO
 {
-    public string Title { get; set; }
-    public int Offset { get; set; }
+    public List<TimeStop> TimeStops { get; set; }
 }
+
+public record TimeStop(string Title, int Offset);

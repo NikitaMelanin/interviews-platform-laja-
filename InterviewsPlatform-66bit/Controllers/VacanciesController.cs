@@ -24,7 +24,7 @@ public class VacanciesController : Controller
     }
 
     [HttpPost]
-    [Route("{id}/generate-link")]
+    [Route("{id}/generateLink")]
     [Produces("application/json")]
     public async Task<IActionResult> GenerateLink(string id) =>
         await DbExceptionsHandler.HandleAsync(async () =>

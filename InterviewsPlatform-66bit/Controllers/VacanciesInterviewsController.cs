@@ -9,7 +9,7 @@ using MongoDB.Driver;
 namespace InterviewsPlatform_66bit.Controllers;
 
 [Authorize]
-[Route("/vacancies/{id}/interviews")]
+[Route("/vacancies/{passLink}/interviews")]
 public class VacanciesInterviewsController : Controller
 {
     private readonly IDBResolver dbResolver;
@@ -28,7 +28,7 @@ public class VacanciesInterviewsController : Controller
     
     [HttpPost]
     [Produces("application/json")]
-    public async Task<IActionResult> AddInterview(string id, [FromBody] IntervieweePostDTO intervieweePost) =>
+    public async Task<IActionResult> AddInterview(string passLink, [FromBody] IntervieweePostDTO intervieweePost) =>
         await DbExceptionsHandler.HandleAsync(async () =>
         {
             var interviewsCollection = dbResolver.GetMongoCollection<InterviewDTO>(dbName, "interviews");
@@ -41,7 +41,7 @@ public class VacanciesInterviewsController : Controller
                 IntervieweeId = interviewee.Id
             };
 
-            var filterVacancy = Builders<VacancyDTO>.Filter.Eq(v => v.PassLink, id);
+            var filterVacancy = Builders<VacancyDTO>.Filter.Eq(v => v.PassLink, passLink);
             var updateVacancy = Builders<VacancyDTO>.Update.Push(v => v.Interviews, interview.Id);
 
             var filterInterviewee = Builders<IntervieweeDTO>.Filter.Eq(i => i.Id, interviewee.Id);
@@ -53,8 +53,14 @@ public class VacanciesInterviewsController : Controller
             await vacanciesCollection.UpdateOneAsync(filterVacancy, updateVacancy);
 
             return Ok(interview.Id);
-        }, BadRequest(), NotFound());
+        }, BadRequest(), NotFound(new {errorText = "Bad id"}));
 
+    // [HttpGet]
+    // [Produces("application/json")]
+    // public async Task<IActionResult> GetAllVacancyInterviews(string passLink)
+    // {
+    //     
+    // }
 
     private static async Task<IntervieweeDTO> FindAndUpdateOrInsertIntervieweeAsync(
         IMongoCollection<IntervieweeDTO> collection,
