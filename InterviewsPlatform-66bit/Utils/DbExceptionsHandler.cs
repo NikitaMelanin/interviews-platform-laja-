@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace InterviewsPlatform_66bit.Utils;
 
-public class DbExceptionsHandler
+public static class DbExceptionsHandler
 {
     public static async Task<IActionResult> HandleAsync(Func<Task<IActionResult>> handling,
         IActionResult badRequest, IActionResult notFound)
@@ -15,7 +15,7 @@ public class DbExceptionsHandler
         {
             return badRequest;
         }
-        catch (InvalidOperationException)
+        catch (Exception ex) when (ex is InvalidOperationException)
         {
             return notFound;
         }

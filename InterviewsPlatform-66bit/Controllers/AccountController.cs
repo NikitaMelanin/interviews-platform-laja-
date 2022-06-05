@@ -40,6 +40,6 @@ public class AccountController : Controller
                 AuthOptions.GetSymmetricSecurityKey(),
                 SecurityAlgorithms.HmacSha256));
 
-        return Ok(new JwtSecurityTokenHandler().WriteToken(token));
+        return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token) });
     }
 }

@@ -35,7 +35,7 @@ public class JwtIdentifier: IIdentifier
 
         var claims = new List<Claim>
         {
-            new (ClaimTypes.Name, login)
+            new (ClaimTypes.Name, user.Id)
         };
 
         claims.AddRange(user.Roles.Select(role => new Claim(ClaimTypes.Role, role)));

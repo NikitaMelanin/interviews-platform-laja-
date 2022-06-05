@@ -3,6 +3,7 @@ using InterviewsPlatform_66bit.DTO;
 using InterviewsPlatform_66bit.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualBasic;
 using MongoDB.Driver;
 
 namespace InterviewsPlatform_66bit.Controllers;
@@ -13,88 +14,106 @@ public class VacanciesController : Controller
 {
     private readonly IDBResolver dbResolver;
     private readonly string dbName;
+    private readonly IMongoCollection<VacancyDTO> collection;
 
     public VacanciesController(IDBResolver dbResolver, string dbName)
     {
         this.dbResolver = dbResolver;
         this.dbName = dbName;
+        collection = dbResolver.GetMongoCollection<VacancyDTO>(dbName, "vacancies");
     }
 
     [HttpPost]
-    [Route("{id}/generateLink")]
+    [Route("{id}/generate-link")]
     [Produces("application/json")]
-    public async Task<IActionResult> GenerateLink(string id)
-    {
-        var collection = dbResolver.GetMongoCollection<VacancyDTO>(dbName, "vacancies");
-
-        var guid = Guid.NewGuid();
-        var update = Builders<VacancyDTO>.Update
-            .Set(v => v.PassLink, guid.ToString());
-
-        var filter = Builders<VacancyDTO>.Filter.Eq(v => v.Id, id);
-
-        var res = await collection.UpdateOneAsync(filter, update);
-
-        if (!res.IsAcknowledged || !res.IsModifiedCountAvailable)
+    public async Task<IActionResult> GenerateLink(string id) =>
+        await DbExceptionsHandler.HandleAsync(async () =>
         {
-            return NotFound(new {errorText = "Bad id"});
-        }
-        return Ok(guid);
-    }
-    
+            var guid = Guid.NewGuid();
+            var update = Builders<VacancyDTO>.Update
+                .Set(v => v.PassLink, guid.ToString());
+
+            var filter = Builders<VacancyDTO>.Filter.Eq(v => v.Id, id);
+            
+            var vacancy = (await collection.FindAsync(filter)).Single();
+
+            if (vacancy.CreatorId != User.Identity!.Name!)
+            {
+                return Forbid();
+            }
+
+            await collection.UpdateOneAsync(filter, update);
+
+            return Ok(guid);
+        }, BadRequest(), NotFound(new {errorText = "Bad id"}));
+
     [HttpPost]
     [Produces("application/json")]
     public async Task<IActionResult> Create([FromBody] VacancyPostDTO postDto)
     {
-        var collection = dbResolver.GetMongoCollection<VacancyDTO>(dbName, "vacancies");
+        var creatorId = User.Identity!.Name;
 
-        var vacancy = new VacancyDTO(postDto);
+        var vacancy = new VacancyDTO(postDto) { CreatorId = creatorId! };
 
         await collection.InsertOneAsync(vacancy);
 
-        Response.Headers.Location = $"/vacancies/{vacancy.Id}";
-        
-        return Ok();
+        return Created($"/vacancies/{vacancy.Id}", vacancy);
     }
 
     [HttpPatch]
     [Route("{id}")]
     [Produces("application/json")]
-    public async Task<IActionResult> Update(string id, [FromBody] VacancyPostDTO postDto)
-    {
-        var collection = dbResolver.GetMongoCollection<VacancyDTO>(dbName, "vacancies");
-
-        var update = Builders<VacancyDTO>.Update
-            .Set(v => v.Name, postDto.Name)
-            .Set(v => v.Description, postDto.Description)
-            .Set(v => v.Questions, postDto.Questions);
-
-        var filter = Builders<VacancyDTO>.Filter.Eq(v => v.Id, id);
-
-        var res = await collection.UpdateOneAsync(filter, update);
-
-        if (!res.IsAcknowledged || !res.IsModifiedCountAvailable)
+    public async Task<IActionResult> Update(string id, [FromBody] VacancyPostDTO postDto) =>
+        await DbExceptionsHandler.HandleAsync(async () =>
         {
-            return NotFound(new {errorText = "Bad id"});
-        }
+            var update = Builders<VacancyDTO>.Update
+                .Set(v => v.Name, postDto.Name)
+                .Set(v => v.Description, postDto.Description)
+                .Set(v => v.Questions, postDto.Questions);
 
-        return Ok();
-    }
+            var filter = Builders<VacancyDTO>.Filter.Eq(v => v.Id, id);
+            
+            var vacancy = (await collection.FindAsync(filter)).Single();
+
+            if (vacancy.CreatorId != User.Identity!.Name!)
+            {
+                return Forbid();
+            }
+
+            await collection.UpdateOneAsync(filter, update);
+
+            return Ok(vacancy);
+        }, BadRequest(), NotFound(new {errorText = "Bad id"}));
 
     [HttpGet]
     [Route("{id}")]
     [Produces("application/json")]
-    public async Task<IActionResult> Read(string id)
-    {
-        var collection = dbResolver.GetMongoCollection<VacancyDTO>(dbName, "vacancies");
-
-        return await DbExceptionsHandler.HandleAsync(async () =>
+    public async Task<IActionResult> Read(string id) =>
+        await DbExceptionsHandler.HandleAsync(async () =>
         {
             var filter = Builders<VacancyDTO>.Filter.Eq(v => v.Id, id);
 
             var vacancy = (await collection.FindAsync(filter)).Single();
 
             return Ok(vacancy);
-        }, BadRequest(), NotFound());
-    }
+        }, BadRequest(), NotFound(new {errorText = "Bad id"}));
+
+    [HttpDelete]
+    [Route("{id}")]
+    public async Task<IActionResult> Delete(string id) =>
+        await DbExceptionsHandler.HandleAsync(async () =>
+        {
+            var filter = Builders<VacancyDTO>.Filter.Eq(v => v.Id, id);
+            
+            var vacancy = (await collection.FindAsync(filter)).Single();
+
+            if (vacancy.CreatorId != User.Identity!.Name!)
+            {
+                return Forbid();
+            }
+
+            await collection.DeleteOneAsync(filter);
+
+            return NoContent();
+        }, BadRequest(), NotFound(new {errorText = "Bad id"}));
 }

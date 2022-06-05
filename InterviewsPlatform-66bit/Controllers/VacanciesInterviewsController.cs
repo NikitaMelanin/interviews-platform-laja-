@@ -14,44 +14,47 @@ public class VacanciesInterviewsController : Controller
 {
     private readonly IDBResolver dbResolver;
     private readonly string dbName;
+    private readonly IMongoCollection<VacancyDTO> vacanciesCollection;
+    private readonly IMongoCollection<IntervieweeDTO> intervieweesCollection;
 
     public VacanciesInterviewsController(IDBResolver dbResolver, string dbName)
     {
         this.dbResolver = dbResolver;
         this.dbName = dbName;
+        
+        vacanciesCollection = dbResolver.GetMongoCollection<VacancyDTO>(dbName, "vacancies");
+        intervieweesCollection = dbResolver.GetMongoCollection<IntervieweeDTO>(dbName, "interviewees");
     }
     
     [HttpPost]
     [Produces("application/json")]
-    public async Task<IActionResult> AddInterview(string id, [FromBody] IntervieweePostDTO intervieweePost)
-    {
-        var vacanciesCollection = dbResolver.GetMongoCollection<VacancyDTO>(dbName, "vacancies");
-        var intervieweesCollection = dbResolver.GetMongoCollection<IntervieweeDTO>(dbName, "interviewees");
-        var interviewsCollection = dbResolver.GetMongoCollection<InterviewDTO>(dbName, "interviews");
-
-        var interviewee = await FindAndUpdateOrInsertIntervieweeAsync(intervieweesCollection, intervieweePost);
-
-        var interview = new InterviewDTO
+    public async Task<IActionResult> AddInterview(string id, [FromBody] IntervieweePostDTO intervieweePost) =>
+        await DbExceptionsHandler.HandleAsync(async () =>
         {
-            Id = ObjectId.GenerateNewId().ToString(),
-            IntervieweeId = interviewee.Id
-        };
+            var interviewsCollection = dbResolver.GetMongoCollection<InterviewDTO>(dbName, "interviews");
+            
+            var interviewee = await FindAndUpdateOrInsertIntervieweeAsync(intervieweesCollection, intervieweePost);
 
-        var filterVacancy = Builders<VacancyDTO>.Filter.Eq(v => v.PassLink, id);
-        var updateVacancy = Builders<VacancyDTO>.Update.Push(v => v.Interviews, interview.Id);
+            var interview = new InterviewDTO
+            {
+                Id = ObjectId.GenerateNewId().ToString(),
+                IntervieweeId = interviewee.Id
+            };
 
-        var filterInterviewee = Builders<IntervieweeDTO>.Filter.Eq(i => i.Id, interviewee.Id);
-        var updateInterviewee = Builders<IntervieweeDTO>.Update.Push(i => i.Interviews, interview.Id);
+            var filterVacancy = Builders<VacancyDTO>.Filter.Eq(v => v.PassLink, id);
+            var updateVacancy = Builders<VacancyDTO>.Update.Push(v => v.Interviews, interview.Id);
 
-        await interviewsCollection.InsertOneAsync(interview);
-        await intervieweesCollection.UpdateOneAsync(filterInterviewee, updateInterviewee);
+            var filterInterviewee = Builders<IntervieweeDTO>.Filter.Eq(i => i.Id, interviewee.Id);
+            var updateInterviewee = Builders<IntervieweeDTO>.Update.Push(i => i.Interviews, interview.Id);
 
-        var vacancy = await vacanciesCollection.FindOneAndUpdateAsync(filterVacancy, updateVacancy);
-        var interviews = vacancy.Interviews.Append(interview.Id);
-        return Ok(interviews.LastOrDefault());
-    }
-    
-    
+            await interviewsCollection.InsertOneAsync(interview);
+            await intervieweesCollection.UpdateOneAsync(filterInterviewee, updateInterviewee);
+
+            await vacanciesCollection.UpdateOneAsync(filterVacancy, updateVacancy);
+
+            return Ok(interview.Id);
+        }, BadRequest(), NotFound());
+
 
     private static async Task<IntervieweeDTO> FindAndUpdateOrInsertIntervieweeAsync(
         IMongoCollection<IntervieweeDTO> collection,
