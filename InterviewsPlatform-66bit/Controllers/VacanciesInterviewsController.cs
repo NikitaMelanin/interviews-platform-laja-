@@ -1,11 +1,13 @@
 using InterviewsPlatform_66bit.DB;
 using InterviewsPlatform_66bit.DTO;
 using InterviewsPlatform_66bit.Utils;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 
 namespace InterviewsPlatform_66bit.Controllers;
 
+[Authorize]
 [Route("/vacancies/{id}/interviews")]
 public class VacanciesInterviewsController : Controller
 {
@@ -18,7 +20,7 @@ public class VacanciesInterviewsController : Controller
         this.dbName = dbName;
     }
     
-    [HttpPatch]
+    [HttpPost]
     [Produces("application/json")]
     public async Task<IActionResult> AddInterview(string id, [FromBody] IntervieweePostDTO intervieweePost)
     {

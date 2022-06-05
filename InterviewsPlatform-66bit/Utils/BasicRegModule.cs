@@ -2,6 +2,7 @@
 using InterviewsPlatform_66bit.Controllers;
 using InterviewsPlatform_66bit.DB;
 using InterviewsPlatform_66bit.Hubs;
+using InterviewsPlatform_66bit.Services;
 
 namespace InterviewsPlatform_66bit.Utils;
 
@@ -20,6 +21,11 @@ public class BasicRegModule : Module
         //     .WithParameter("dbName", "InterviewsPortal");
         
         builder.RegisterType<VacanciesController>().ExternallyOwned()
+            .WithParameter("dbName", "InterviewsPortal");
+
+        builder.RegisterType<AccountController>().ExternallyOwned();
+
+        builder.RegisterType<JwtIdentifier>().As<IIdentifier>()
             .WithParameter("dbName", "InterviewsPortal");
     }
 }

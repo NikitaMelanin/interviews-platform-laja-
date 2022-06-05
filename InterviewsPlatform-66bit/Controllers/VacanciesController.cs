@@ -1,11 +1,13 @@
 ﻿using InterviewsPlatform_66bit.DB;
 using InterviewsPlatform_66bit.DTO;
 using InterviewsPlatform_66bit.Utils;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 
 namespace InterviewsPlatform_66bit.Controllers;
 
+[Authorize]
 [Route("/vacancies")]
 public class VacanciesController : Controller
 {
