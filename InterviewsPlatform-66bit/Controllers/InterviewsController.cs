@@ -13,14 +13,14 @@ public class InterviewsController : Controller
 {
     private readonly IDBResolver dbResolver;
     private readonly string dbName;
-    private readonly IMongoCollection<InterviewDTO> interviewsCollection;
+    private readonly IMongoCollection<InterviewDTO> collection;
 
     public InterviewsController(IDBResolver dbResolver, string dbName)
     {
         this.dbResolver = dbResolver;
         this.dbName = dbName;
         
-        interviewsCollection = dbResolver.GetMongoCollection<InterviewDTO>(dbName, "interviews");
+        collection = dbResolver.GetMongoCollection<InterviewDTO>(dbName, "interviews");
     }
 
     [HttpPatch]
@@ -32,8 +32,20 @@ public class InterviewsController : Controller
             var filter = Builders<InterviewDTO>.Filter.Eq(i => i.Id, id);
             var update = Builders<InterviewDTO>.Update.PushEach(i => i.TimeStops, times.TimeStops);
         
-            var updateRes = await interviewsCollection.FindOneAndUpdateAsync(filter, update);
+            var updateRes = await collection.FindOneAndUpdateAsync(filter, update);
         
             return Ok(updateRes.TimeStops.Concat(times.TimeStops));
-        }, BadRequest(), NotFound());
+        }, BadRequest(), NotFound(new {errorText = "Bad id"}));
+
+    [HttpGet]
+    [Produces("application/json")]
+    public async Task<IActionResult> Read(string id) =>
+        await DbExceptionsHandler.HandleAsync(async () =>
+        {
+            var filter = Builders<InterviewDTO>.Filter.Eq(i => i.Id, id);
+
+            var interview = (await collection.FindAsync(filter)).Single();
+
+            return Ok(interview);
+        }, BadRequest(), NotFound(new {errorText = "Bad id"}));
 }

@@ -19,6 +19,7 @@ public class VacanciesController : Controller
     {
         this.dbResolver = dbResolver;
         this.dbName = dbName;
+        
         collection = dbResolver.GetMongoCollection<VacancyDTO>(dbName, "vacancies");
     }
 
