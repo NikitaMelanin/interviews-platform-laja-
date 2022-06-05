@@ -11,11 +11,12 @@ import {InterviewComponent} from './interview/interview.component';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {MatButtonModule} from '@angular/material/button';
 import {MatCardModule} from '@angular/material/card';
-import {CreateVacancyComponent} from "./create-vacancy/create-vacancy.component";
+import {CreateVacancyComponent} from "./dashboard/components/create-vacancy/create-vacancy.component";
 import {MatIconModule} from "@angular/material/icon";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";
-import {AddInterviewComponent} from "./add-interview/add-interview.component";
+import {StartInterviewComponent} from "./start-interview/start-interview.component";
+import {DashboardComponent} from "./dashboard/components/dashboard/dashboard.component";
 
 @NgModule({
   declarations: [
@@ -24,7 +25,7 @@ import {AddInterviewComponent} from "./add-interview/add-interview.component";
     HomeComponent,
     InterviewComponent,
     CreateVacancyComponent,
-    AddInterviewComponent
+    StartInterviewComponent
   ],
   imports: [
     BrowserModule.withServerTransition({appId: 'ng-cli-universal'}),
@@ -34,9 +35,9 @@ import {AddInterviewComponent} from "./add-interview/add-interview.component";
     FormsModule,
     RouterModule.forRoot([
       {path: '', component: HomeComponent, pathMatch: 'full'},
-      {path: 'interviews/:id', component: InterviewComponent, pathMatch: 'full'},
-      {path: 'vacancies/:id/add-interview', component: AddInterviewComponent, pathMatch: 'full'},
-      {path: 'create-vacancy', component: CreateVacancyComponent, pathMatch: 'full'},
+      {path: 'vacancy/:id', component: StartInterviewComponent, pathMatch: 'full'},
+      {path: 'interview/:id', component: InterviewComponent, pathMatch: 'full'},
+      {path: 'dashboard', loadChildren: () => import('./dashboard/dashboard.module').then(x => x.DashboardModule)},
     ]),
     NoopAnimationsModule,
     ReactiveFormsModule,

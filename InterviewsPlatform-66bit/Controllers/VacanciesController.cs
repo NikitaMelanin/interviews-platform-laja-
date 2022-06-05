@@ -21,6 +21,28 @@ public class VacanciesController : Controller
     }
 
     [HttpPost]
+    [Route("{id}/generateLink")]
+    [Produces("application/json")]
+    public async Task<IActionResult> GenerateLink(string id)
+    {
+        var collection = dbResolver.GetMongoCollection<VacancyDTO>(dbName, "vacancies");
+
+        var guid = Guid.NewGuid();
+        var update = Builders<VacancyDTO>.Update
+            .Set(v => v.PassLink, guid.ToString());
+
+        var filter = Builders<VacancyDTO>.Filter.Eq(v => v.Id, id);
+
+        var res = await collection.UpdateOneAsync(filter, update);
+
+        if (!res.IsAcknowledged || !res.IsModifiedCountAvailable)
+        {
+            return NotFound(new {errorText = "Bad id"});
+        }
+        return Ok(guid);
+    }
+    
+    [HttpPost]
     [Produces("application/json")]
     public async Task<IActionResult> Create([FromBody] VacancyPostDTO postDto)
     {
@@ -55,8 +77,6 @@ public class VacanciesController : Controller
         {
             return NotFound(new {errorText = "Bad id"});
         }
-        
-        Response.Headers.Location = $"/vacancies/{id}";
 
         return Ok();
     }

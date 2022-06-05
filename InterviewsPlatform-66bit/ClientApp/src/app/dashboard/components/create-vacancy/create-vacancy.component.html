@@ -6,26 +6,29 @@
     </div>
     <div class="mb-3">
       <label for="description" class="form-label">Description</label>
-      <textarea class="form-control" formControlName="description" id="description" rows="3"></textarea>
+      <textarea class="form-control" formControlName="description" id="description"
+                rows="3"></textarea>
     </div>
-    <ng-container formArrayName="questions">
-      <ng-container *ngFor="let questionForm of questions.controls; let i = index">
+    <div formArrayName="questions">
+      <div class="container" *ngFor="let questionForm of questions.controls; let i = index">
         <form [formGroup]="$any(questionForm)">
           <div class="input-group px-3 mb-3">
             <input type="text"
                    formControlName="title"
                    class="form-control" placeholder="Question">
             <span class="btn btn-danger input-group-text" (click)="deleteQuestion(i)">
-            <i class=" bi bi-trash"></i>
-          </span>
+              <i class="bi bi-trash">-</i>
+            </span>
           </div>
         </form>
-      </ng-container>
-    </ng-container>
-    <span class="btn btn-dark me-1" (click)="addQuestion()">
-      <i class="bi bi-plus"></i>
-    </span>
-    <button type="submit" class="btn btn-outline-success" [disabled]="!myForm.valid">
+      </div>
+      <div class="btn btn-dark my-1" (click)="addQuestion()">
+        <i class="bi bi-plus">Add new question</i>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-outline-success"
+            [disabled]="!myForm.valid">
       <i class="bi bi-pen"></i>
       Save
     </button>

@@ -23,18 +23,18 @@ public class InterviewsController : Controller
     [HttpPatch]
     [Route("time-stops")]
     [Produces("application/json")]
-    public async Task<IActionResult> AddTimeStops(string id, [FromBody] TimeStop[] times)
+    public async Task<IActionResult> AddTimeStops(string id, [FromBody] TimeStopDTO times)
     {
         var interviewsCollection = dbResolver.GetMongoCollection<InterviewDTO>(dbName, "interviews");
-
+        
         return await DbExceptionsHandler.HandleAsync(async () =>
         {
             var filter = Builders<InterviewDTO>.Filter.Eq(i => i.Id, id);
-            var update = Builders<InterviewDTO>.Update.PushEach(i => i.TimeStops, times);
-
+            var update = Builders<InterviewDTO>.Update.PushEach(i => i.TimeStops, times.TimeStops);
+        
             var updateRes = await interviewsCollection.FindOneAndUpdateAsync(filter, update);
-
-            return Ok(updateRes.TimeStops.Concat(times));
+        
+            return Ok(updateRes.TimeStops.Concat(times.TimeStops));
         }, BadRequest(), NotFound());
     }
 }
