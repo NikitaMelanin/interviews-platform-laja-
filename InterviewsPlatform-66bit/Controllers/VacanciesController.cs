@@ -32,7 +32,7 @@ public class VacanciesController : Controller
 
         Response.Headers.Location = $"/vacancies/{vacancy.Id}";
         
-        return Ok();
+        return Ok(vacancy);
     }
 
     [HttpGet]

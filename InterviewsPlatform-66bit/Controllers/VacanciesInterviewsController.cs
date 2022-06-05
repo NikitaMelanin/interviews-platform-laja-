@@ -3,6 +3,7 @@ using InterviewsPlatform_66bit.DTO;
 using InterviewsPlatform_66bit.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace InterviewsPlatform_66bit.Controllers;
@@ -28,20 +29,30 @@ public class VacanciesInterviewsController : Controller
         var intervieweesCollection = dbResolver.GetMongoCollection<IntervieweeDTO>(dbName, "interviewees");
         var interviewsCollection = dbResolver.GetMongoCollection<InterviewDTO>(dbName, "interviews");
 
-        return await DbExceptionsHandler.HandleAsync(async () =>
+        // return await DbExceptionsHandler.HandleAsync(async () =>
         {
             var interviewee = await FindAndUpdateOrInsertIntervieweeAsync(intervieweesCollection, intervieweePost);
 
-            var interview = new InterviewDTO {IntervieweeId = interviewee.Id};
-            await interviewsCollection.InsertOneAsync(interview);
+            var interview = new InterviewDTO
+            {
+                Id = ObjectId.GenerateNewId().ToString(),
+                IntervieweeId = interviewee.Id
+            };
 
             var filterVacancy = Builders<VacancyDTO>.Filter.Eq(v => v.Id, id);
             var updateVacancy = Builders<VacancyDTO>.Update.Push(v => v.Interviews, interview.Id);
 
+            var filterInterviewee = Builders<IntervieweeDTO>.Filter.Eq(i => i.Id, interviewee.Id);
+            var updateInterviewee = Builders<IntervieweeDTO>.Update.Push(i => i.Interviews, interview.Id);
+
+            await interviewsCollection.InsertOneAsync(interview);
+            await intervieweesCollection.UpdateOneAsync(filterInterviewee, updateInterviewee);
+
             var vacancy = await vacanciesCollection.FindOneAndUpdateAsync(filterVacancy, updateVacancy);
 
-            return Ok(vacancy.Interviews.Append(interviewee.Id));
-        }, BadRequest(), NotFound());
+            return Ok(vacancy.Interviews.Append(interview.Id));
+            // }, BadRequest(), NotFound());
+        }
     }
 
     private static async Task<IntervieweeDTO> FindAndUpdateOrInsertIntervieweeAsync(
@@ -55,11 +66,13 @@ public class VacanciesInterviewsController : Controller
             (builder.Eq(u => u.Email, intervieweePost.Email) | builder.Eq(u => u.Phone, intervieweePost.Phone));
 
         var intervieweeDb = await collection.FindAsync(filter);
-
+        
         var interviewee = new IntervieweeDTO(intervieweePost);
-        if (await intervieweeDb.AnyAsync())
+
+        var first = await intervieweeDb.FirstOrDefaultAsync();
+        
+        if (first is not null)
         {
-            var first = await intervieweeDb.SingleAsync();
             interviewee.Id = first.Id;
             await collection.ReplaceOneAsync(filter, interviewee);
         }
