@@ -10,6 +10,8 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {MatButtonModule} from '@angular/material/button';
 import {MatCardModule} from '@angular/material/card';
 import {ScreenVideoReceiverService} from "./services/screenVideoReceiver.service";
+import {HttpClient} from "@angular/common/http";
+
 
 @Component({
   selector: 'app-interview',
@@ -41,14 +43,17 @@ export class InterviewComponent implements OnInit, OnDestroy {
   private interviewId!: string;
   private questionsIterator!: IterableIterator<[number, string]>;
 
-  constructor(private readonly videoRecorderService: VideoRecorderService,
-              private readonly screenVideoRecorderService: VideoRecorderService,
-              private readonly videoReceiverService: VideoReceiverService,
-              private readonly screenReceiverService: ScreenVideoReceiverService,
-              private readonly questionsReceiverService: SignalrQuestionsReceiver,
-              private readonly connectorService: SignalrConnectorService,
-              private readonly route: ActivatedRoute,
-              private readonly router: Router) {
+  constructor(
+    private readonly videoRecorderService: VideoRecorderService,
+    private readonly screenVideoRecorderService: VideoRecorderService,
+    private readonly videoReceiverService: VideoReceiverService,
+    private readonly screenReceiverService: ScreenVideoReceiverService,
+    private readonly questionsReceiverService: SignalrQuestionsReceiver,
+    private readonly connectorService: SignalrConnectorService,
+    private readonly route: ActivatedRoute,
+    private readonly router: Router,
+    private readonly httpClient: HttpClient
+  ) {
     this.buttonName = "Далее";
   }
 
@@ -56,21 +61,29 @@ export class InterviewComponent implements OnInit, OnDestroy {
     if (this.video) {
       this.video.getVideoTracks().forEach(x => x.stop());
     }
-
     this.subscribe.unsubscribe();
   }
 
   @HostListener('document:visibilitychange', ['$event'])
   visibilitychange() {
-      this.checkHiddenDocument();
+    this.checkHiddenDocument();
   }
 
   checkHiddenDocument() {
-      if (document.hidden){
-          console.log('hidden ', this.seconds);
-      } else {
-          console.log('visible ', this.seconds);
-      }
+    if (document.hidden) {
+      this.makeTimestop('Ушел со вкладки', this.seconds);
+      console.log('hidden ', this.seconds);
+    } else {
+      this.makeTimestop('Вернулся со вкладки', this.seconds);
+      console.log('visible ', this.seconds);
+    }
+  }
+
+  async makeTimestop(title: string, offset: number) {
+    this.httpClient.patch('https://localhost:44423/api/interviews/' + this.interviewId + '/time-stops', {
+      timeStops: [{title, offset}]
+    }).subscribe(x => {
+    });
   }
 
   async ngOnInit(): Promise<void> {
@@ -81,7 +94,7 @@ export class InterviewComponent implements OnInit, OnDestroy {
     let video = await this.videoReceiverService.getVideo();
     let screenVideo = await this.screenReceiverService.getVideo();
 
-    if (video && screenVideo){
+    if (video && screenVideo) {
       await this.connectorService.start(this.interviewId)
 
       this.RecordVideo(video);
@@ -89,7 +102,9 @@ export class InterviewComponent implements OnInit, OnDestroy {
 
       this.questionsIterator = (await this.questionsReceiverService.getQuestions()).entries();
       const source = timer(1000, 1000);
-      this.subscribe = source.subscribe(x => this.seconds = x);
+      this.subscribe = source.subscribe(x => {
+        this.seconds = x;
+      });
     }
   }
 
@@ -105,17 +120,17 @@ export class InterviewComponent implements OnInit, OnDestroy {
     this.screenVideoRecorderService.record(screenVideo);
   }
 
-  nextQuestion(){
-    if (this.buttonName === "Далее"){
+  nextQuestion() {
+    if (this.buttonName === "Далее") {
       let question = this.questionsIterator.next();
-      if (question.done){
+      if (question.done) {
         this.buttonName = "Завершить";
         this.currentQuestion = "";
       } else {
-          this.currentQuestion = question.value[1];
+        this.currentQuestion = question.value[1];
       }
     } else {
-        this.router.navigate(["/"]);
+      this.router.navigate(["/"]);
     }
   }
 }

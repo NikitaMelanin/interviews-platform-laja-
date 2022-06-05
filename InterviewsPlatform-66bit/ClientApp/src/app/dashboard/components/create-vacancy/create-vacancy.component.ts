@@ -2,13 +2,13 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 
 import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {HttpClient} from "@angular/common/http";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-create-vacancy',
   templateUrl: './create-vacancy.component.html',
   styleUrls: ['./create-vacancy.component.css'],
-  providers: [
-  ]
+  providers: []
 
 })
 
@@ -20,7 +20,7 @@ export class CreateVacancyComponent implements OnInit, OnDestroy {
     return this.myForm.controls["questions"] as FormArray;
   }
 
-  constructor(private fb: FormBuilder, private httpClient: HttpClient) {
+  constructor(private fb: FormBuilder, private httpClient: HttpClient, private readonly router: Router) {
   }
 
   onSubmit() {
@@ -29,7 +29,7 @@ export class CreateVacancyComponent implements OnInit, OnDestroy {
       description: this.myForm.value.description,
       questions: this.myForm.value.questions?.map((x: { title: string }) => x.title) || [],
     }).subscribe(x => {
-      console.log('ready')
+      this.router.navigate(['dashboard'])
     });
   }
 
