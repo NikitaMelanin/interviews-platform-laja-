@@ -1,6 +1,7 @@
 ﻿using InterviewsPlatform_66bit.DB;
 using InterviewsPlatform_66bit.DTO;
 using Microsoft.AspNetCore.SignalR;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.GridFS;
 
@@ -15,6 +16,48 @@ public class InterviewHub : Hub
     {
         this.dbResolver = dbResolver;
         this.dbName = dbName;
+    }
+
+    public async void StartDownloadingVideo(string interviewId)
+    {
+        var interviews = dbResolver.GetMongoCollection<InterviewDTO>(dbName, "interviews");
+
+        var filter = Builders<InterviewDTO>.Filter.Eq(i => i.Id, interviewId);
+
+        var interview = (await interviews.FindAsync(filter)).SingleOrDefault();
+
+        if (interview is null)
+        {
+            throw new Exception("Interview not found");
+        }
+
+        var bucket = dbResolver.GetGridFsBucket(dbName);
+
+        var videoBytes = await bucket.DownloadAsBytesAsync(ObjectId.Parse(interview.VideoId));
+
+        await Clients.Caller.SendCoreAsync("setVideoBytes",
+            new object?[] {Convert.ToBase64String(videoBytes)});
+    }
+    
+    public async void StartDownloadingScreenVideo(string interviewId)
+    {
+        var interviews = dbResolver.GetMongoCollection<InterviewDTO>(dbName, "interviews");
+
+        var filter = Builders<InterviewDTO>.Filter.Eq(i => i.Id, interviewId);
+
+        var interview = (await interviews.FindAsync(filter)).SingleOrDefault();
+
+        if (interview is null)
+        {
+            throw new Exception("Interview not found");
+        }
+
+        var bucket = dbResolver.GetGridFsBucket(dbName);
+
+        var screenVideoBytes = await bucket.DownloadAsBytesAsync(ObjectId.Parse(interview.ScreenVideoId));
+
+        await Clients.Caller.SendCoreAsync("setScreenVideoBytes",
+            new object?[] {Convert.ToBase64String(screenVideoBytes)});
     }
 
     public async void AddVideoBytes(string base64Bytes)

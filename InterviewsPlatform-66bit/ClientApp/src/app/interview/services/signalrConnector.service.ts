@@ -28,6 +28,10 @@ export class SignalrConnectorService implements OnDestroy {
     return new Promise<void>(() => {});
   }
 
+  on(methodName: string, func: (...args: any[]) => void): void{
+    this.connection.on(methodName, func);
+  }
+
   async invoke(methodName: string, ...args: any[]): Promise<any> {
     return this.connection.invoke(methodName, ...args)
   }
