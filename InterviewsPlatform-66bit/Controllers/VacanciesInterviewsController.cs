@@ -9,13 +9,13 @@ using MongoDB.Driver;
 namespace InterviewsPlatform_66bit.Controllers;
 
 [Authorize]
-[Route("/vacancies/{passLink}/interviews")]
+[Route("/vacancies/{id}/interviews")]
 public class VacanciesInterviewsController : Controller
 {
     private readonly IDBResolver dbResolver;
     private readonly string dbName;
     private readonly IMongoCollection<VacancyDTO> vacanciesCollection;
-    private readonly IMongoCollection<IntervieweeDTO> intervieweesCollection;
+    private readonly IMongoCollection<InterviewDTO> interviewsCollection;
 
     public VacanciesInterviewsController(IDBResolver dbResolver, string dbName)
     {
@@ -23,15 +23,16 @@ public class VacanciesInterviewsController : Controller
         this.dbName = dbName;
         
         vacanciesCollection = dbResolver.GetMongoCollection<VacancyDTO>(dbName, "vacancies");
-        intervieweesCollection = dbResolver.GetMongoCollection<IntervieweeDTO>(dbName, "interviewees");
+        interviewsCollection = dbResolver.GetMongoCollection<InterviewDTO>(dbName, "interviews");
     }
     
     [HttpPost]
+    [Route("/vacancies/{passLink}/interviews")]
     [Produces("application/json")]
     public async Task<IActionResult> AddInterview(string passLink, [FromBody] IntervieweePostDTO intervieweePost) =>
         await DbExceptionsHandler.HandleAsync(async () =>
         {
-            var interviewsCollection = dbResolver.GetMongoCollection<InterviewDTO>(dbName, "interviews");
+            var intervieweesCollection = dbResolver.GetMongoCollection<IntervieweeDTO>(dbName, "interviewees");
             
             var interviewee = await FindAndUpdateOrInsertIntervieweeAsync(intervieweesCollection, intervieweePost);
 
@@ -55,12 +56,25 @@ public class VacanciesInterviewsController : Controller
             return Ok(interview.Id);
         }, BadRequest(), NotFound(new {errorText = "Bad id"}));
 
-    // [HttpGet]
-    // [Produces("application/json")]
-    // public async Task<IActionResult> GetAllVacancyInterviews(string passLink)
-    // {
-    //     
-    // }
+    [HttpGet]
+    [Produces("application/json")]
+    public async Task<IActionResult> GetAllVacancyInterviews(string id)
+        => await DbExceptionsHandler.HandleAsync(async () =>
+        {
+            var filter = Builders<VacancyDTO>.Filter.Eq(v => v.Id, id);
+            var vacancy = (await vacanciesCollection.FindAsync(filter)).Single();
+
+            var interviews = new List<InterviewDTO>();
+
+            foreach (var interviewId in vacancy.Interviews)
+            {
+                var interviewFilter = Builders<InterviewDTO>.Filter.Eq(i => i.Id, interviewId);
+                
+                interviews.Add((await interviewsCollection.FindAsync(interviewFilter)).Single());
+            }
+
+            return Ok(interviews);
+        }, BadRequest(), NotFound(new {errorText = "Bad id"}));
 
     private static async Task<IntervieweeDTO> FindAndUpdateOrInsertIntervieweeAsync(
         IMongoCollection<IntervieweeDTO> collection,
