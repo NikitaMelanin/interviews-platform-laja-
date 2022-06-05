@@ -27,5 +27,8 @@ public class BasicRegModule : Module
 
         builder.RegisterType<JwtIdentifier>().As<IIdentifier>()
             .WithParameter("dbName", "InterviewsPortal");
+
+        builder.RegisterType<VacanciesInterviewsController>().ExternallyOwned()
+            .WithParameter("dbName", "InterviewsPortal");
     }
 }
