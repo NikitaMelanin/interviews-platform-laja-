@@ -33,10 +33,15 @@ public class InterviewHub : Hub
 
         var bucket = dbResolver.GetGridFsBucket(dbName);
 
-        var videoBytes = await bucket.DownloadAsBytesAsync(ObjectId.Parse(interview.VideoId));
+        await using var stream = await bucket.OpenDownloadStreamAsync(ObjectId.Parse(interview.VideoId));
 
-        await Clients.Caller.SendCoreAsync("setVideoBytes",
-            new object?[] {Convert.ToBase64String(videoBytes)});
+        while (stream.Position != stream.Length)
+        {
+            await Clients.Caller.SendCoreAsync("setVideoBytes",
+                new object?[] {stream.ReadByte()});
+        }
+
+        await stream.CloseAsync();
     }
     
     public async void StartDownloadingScreenVideo(string interviewId)
@@ -53,11 +58,16 @@ public class InterviewHub : Hub
         }
 
         var bucket = dbResolver.GetGridFsBucket(dbName);
+        
+        await using var stream = await bucket.OpenDownloadStreamAsync(ObjectId.Parse(interview.ScreenVideoId));
 
-        var screenVideoBytes = await bucket.DownloadAsBytesAsync(ObjectId.Parse(interview.ScreenVideoId));
+        while (stream.Position != stream.Length)
+        {
+            await Clients.Caller.SendCoreAsync("setScreenVideoBytes",
+                new object?[] {stream.ReadByte()});
+        }
 
-        await Clients.Caller.SendCoreAsync("setScreenVideoBytes",
-            new object?[] {Convert.ToBase64String(screenVideoBytes)});
+        await stream.CloseAsync();
     }
 
     public async void AddVideoBytes(string base64Bytes)
