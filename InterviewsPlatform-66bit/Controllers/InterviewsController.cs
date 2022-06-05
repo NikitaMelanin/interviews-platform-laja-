@@ -22,7 +22,8 @@ public class InterviewsController : Controller
 
     [HttpPatch]
     [Route("time-stops")]
-    public async Task<IActionResult> AddTimeStops(string id, [FromBody] DateTime[] times)
+    [Produces("application/json")]
+    public async Task<IActionResult> AddTimeStops(string id, [FromBody] TimeStop[] times)
     {
         var interviewsCollection = dbResolver.GetMongoCollection<InterviewDTO>(dbName, "interviews");
 

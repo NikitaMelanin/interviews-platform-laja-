@@ -20,6 +20,7 @@ public class AccountController : Controller
     [HttpGet]
     [AllowAnonymous]
     [Route("login")]
+    [Produces("application/json")]
     public async Task<IActionResult> Login(string login, string password)
     {
         var identity = await identifier.IdentifyUser(login, password);

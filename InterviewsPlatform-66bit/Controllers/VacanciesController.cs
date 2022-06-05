@@ -32,7 +32,28 @@ public class VacanciesController : Controller
 
         Response.Headers.Location = $"/vacancies/{vacancy.Id}";
         
-        return Ok(vacancy);
+        return Ok();
+    }
+
+    [HttpPatch]
+    [Route("{id}")]
+    [Produces("application/json")]
+    public async Task<IActionResult> Update(string id, [FromBody] VacancyPostDTO postDto)
+    {
+        var collection = dbResolver.GetMongoCollection<VacancyDTO>(dbName, "vacancies");
+
+        var update = Builders<VacancyDTO>.Update
+            .Set(v => v.Name, postDto.Name)
+            .Set(v => v.Description, postDto.Description)
+            .Set(v => v.Questions, postDto.Questions);
+
+        var filter = Builders<VacancyDTO>.Filter.Eq(v => v.Id, id);
+
+        await collection.UpdateOneAsync(filter, update);
+        
+        Response.Headers.Location = $"/vacancies/{id}";
+
+        return Ok();
     }
 
     [HttpGet]

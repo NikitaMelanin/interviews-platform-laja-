@@ -18,5 +18,5 @@ public class InterviewDTO
     [BsonRepresentation(BsonType.ObjectId)]
     public string ScreenVideoId { get; set; }
 
-    public DateTime[] TimeStops { get; set; } = Array.Empty<DateTime>();
+    public TimeStop[] TimeStops { get; set; } = Array.Empty<TimeStop>();
 }
