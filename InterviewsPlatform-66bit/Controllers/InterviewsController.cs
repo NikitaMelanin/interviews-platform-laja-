@@ -3,6 +3,8 @@ using InterviewsPlatform_66bit.DTO;
 using InterviewsPlatform_66bit.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.IO;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace InterviewsPlatform_66bit.Controllers;
@@ -19,7 +21,7 @@ public class InterviewsController : Controller
     {
         this.dbResolver = dbResolver;
         this.dbName = dbName;
-        
+
         collection = dbResolver.GetMongoCollection<InterviewDTO>(dbName, "interviews");
     }
 
@@ -31,9 +33,9 @@ public class InterviewsController : Controller
         {
             var filter = Builders<InterviewDTO>.Filter.Eq(i => i.Id, id);
             var update = Builders<InterviewDTO>.Update.PushEach(i => i.TimeStops, times.TimeStops);
-        
+
             var updateRes = await collection.FindOneAndUpdateAsync(filter, update);
-        
+
             return Ok(updateRes.TimeStops.Concat(times.TimeStops));
         }, BadRequest(), NotFound(new {errorText = "Bad id"}));
 
@@ -47,5 +49,24 @@ public class InterviewsController : Controller
             var interview = (await collection.FindAsync(filter)).Single();
 
             return Ok(interview);
+        }, BadRequest(), NotFound(new {errorText = "Bad id"}));
+
+    [HttpGet]
+    [Route("video")]
+    public async Task<IActionResult> VideoLink(string id)
+        => await DbExceptionsHandler.HandleAsync(async () =>
+        {
+            var filter = Builders<InterviewDTO>.Filter.Eq(i => i.Id, id);
+
+            var interview = (await collection.FindAsync(filter)).Single();
+
+            var videoBytes = await dbResolver.GetGridFsBucket(dbName)
+                .DownloadAsBytesAsync(ObjectId.Parse(interview.VideoId));
+
+            await using var fs = new FileStream($"./videos/{interview.Id}.mkv", FileMode.Create, FileAccess.Write);
+
+            await fs.WriteAsync(videoBytes);
+
+            return Ok($"/videos/{interview.Id}.mkv");
         }, BadRequest(), NotFound(new {errorText = "Bad id"}));
 }
