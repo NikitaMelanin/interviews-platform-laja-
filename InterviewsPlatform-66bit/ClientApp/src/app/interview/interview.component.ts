@@ -98,7 +98,7 @@ export class InterviewComponent implements OnInit, OnDestroy {
       await this.connectorService.start(this.interviewId)
 
       this.RecordVideo(video);
-      this.RecordScreen(screenVideo)
+      this.RecordScreen(screenVideo);
 
       this.questionsIterator = (await this.questionsReceiverService.getQuestions()).entries();
       const source = timer(1000, 1000);

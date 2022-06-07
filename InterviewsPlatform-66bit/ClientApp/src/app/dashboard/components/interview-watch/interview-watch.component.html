@@ -1,0 +1,12 @@
+<div class="container">
+  <ul>
+    <li *ngFor="let item of timeStops; let i = index" [attr.data-index]="i">
+      {{item.title}} - {{item.offset | minuteSeconds}}
+    </li>
+  </ul>
+  <video controls width="250">
+    <source [src]="videoLink"
+            type="video/mp4">
+  </video>
+
+</div>
