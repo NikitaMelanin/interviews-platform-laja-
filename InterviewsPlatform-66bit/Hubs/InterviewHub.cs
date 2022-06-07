@@ -17,59 +17,7 @@ public class InterviewHub : Hub
         this.dbResolver = dbResolver;
         this.dbName = dbName;
     }
-
-    public async void StartDownloadingVideo(string interviewId)
-    {
-        var interviews = dbResolver.GetMongoCollection<InterviewDTO>(dbName, "interviews");
-
-        var filter = Builders<InterviewDTO>.Filter.Eq(i => i.Id, interviewId);
-
-        var interview = (await interviews.FindAsync(filter)).SingleOrDefault();
-
-        if (interview is null)
-        {
-            throw new Exception("Interview not found");
-        }
-
-        var bucket = dbResolver.GetGridFsBucket(dbName);
-
-        await using var stream = await bucket.OpenDownloadStreamAsync(ObjectId.Parse(interview.VideoId));
-
-        while (stream.Position != stream.Length)
-        {
-            await Clients.Caller.SendCoreAsync("setVideoBytes",
-                new object?[] {stream.ReadByte()});
-        }
-
-        await stream.CloseAsync();
-    }
     
-    public async void StartDownloadingScreenVideo(string interviewId)
-    {
-        var interviews = dbResolver.GetMongoCollection<InterviewDTO>(dbName, "interviews");
-
-        var filter = Builders<InterviewDTO>.Filter.Eq(i => i.Id, interviewId);
-
-        var interview = (await interviews.FindAsync(filter)).SingleOrDefault();
-
-        if (interview is null)
-        {
-            throw new Exception("Interview not found");
-        }
-
-        var bucket = dbResolver.GetGridFsBucket(dbName);
-        
-        await using var stream = await bucket.OpenDownloadStreamAsync(ObjectId.Parse(interview.ScreenVideoId));
-
-        while (stream.Position != stream.Length)
-        {
-            await Clients.Caller.SendCoreAsync("setScreenVideoBytes",
-                new object?[] {stream.ReadByte()});
-        }
-
-        await stream.CloseAsync();
-    }
-
     public async void AddVideoBytes(string base64Bytes)
     {
         var bytes = Convert.FromBase64String(base64Bytes);

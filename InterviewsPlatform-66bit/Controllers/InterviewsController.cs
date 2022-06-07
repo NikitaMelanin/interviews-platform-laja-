@@ -3,7 +3,6 @@ using InterviewsPlatform_66bit.DTO;
 using InterviewsPlatform_66bit.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.IO;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
@@ -63,10 +62,6 @@ public class InterviewsController : Controller
             var videoBytes = await dbResolver.GetGridFsBucket(dbName)
                 .DownloadAsBytesAsync(ObjectId.Parse(interview.VideoId));
 
-            await using var fs = new FileStream($"./videos/{interview.Id}.mkv", FileMode.Create, FileAccess.Write);
-
-            await fs.WriteAsync(videoBytes);
-
-            return Ok($"/videos/{interview.Id}.mkv");
+            return File(videoBytes, "application/octet-stream", enableRangeProcessing: true);
         }, BadRequest(), NotFound(new {errorText = "Bad id"}));
 }
