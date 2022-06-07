@@ -51,6 +51,21 @@ public class InterviewsController : Controller
         }, BadRequest(), NotFound(new {errorText = "Bad id"}));
 
     [HttpGet]
+    [Route("questions")]
+    [Produces("application/json")]
+    public async Task<IActionResult> Questions(string id)
+        => await DbExceptionsHandler.HandleAsync(async () =>
+        {
+            var vacanciesCollection = dbResolver.GetMongoCollection<VacancyDTO>(dbName, "vacancies");
+
+            var filter = Builders<VacancyDTO>.Filter.AnyEq(v => v.Interviews, id);
+
+            var vacancy = (await vacanciesCollection.FindAsync(filter)).Single();
+
+            return Ok(vacancy.Questions);
+        }, BadRequest(), NotFound(new {errorText = "Bad id"}));
+
+    [HttpGet]
     [Route("video")]
     public async Task<IActionResult> VideoLink(string id)
         => await DbExceptionsHandler.HandleAsync(async () =>

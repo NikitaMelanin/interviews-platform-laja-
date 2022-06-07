@@ -5,7 +5,7 @@ import {VideoSenderService} from "./services/videoSender.service";
 import {VideoReceiverService} from "./services/videoReceiver.service";
 import {SignalrVideoUploaderService} from "./services/signalrVideoUploader.service";
 import {SignalrConnectorService} from "./services/signalrConnector.service";
-import {SignalrQuestionsReceiver} from "./services/signalrQuestionsReceiver";
+import {QuestionsReceiver} from "./services/questions-receiver.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {MatButtonModule} from '@angular/material/button';
 import {MatCardModule} from '@angular/material/card';
@@ -24,7 +24,7 @@ import {HttpClient} from "@angular/common/http";
     ScreenVideoReceiverService,
     SignalrVideoUploaderService,
     SignalrConnectorService,
-    SignalrQuestionsReceiver,
+    QuestionsReceiver,
     MatButtonModule,
     MatCardModule
   ]
@@ -48,7 +48,7 @@ export class InterviewComponent implements OnInit, OnDestroy {
     private readonly screenVideoRecorderService: VideoRecorderService,
     private readonly videoReceiverService: VideoReceiverService,
     private readonly screenReceiverService: ScreenVideoReceiverService,
-    private readonly questionsReceiverService: SignalrQuestionsReceiver,
+    private readonly questionsReceiverService: QuestionsReceiver,
     private readonly connectorService: SignalrConnectorService,
     private readonly route: ActivatedRoute,
     private readonly router: Router,
@@ -99,8 +99,8 @@ export class InterviewComponent implements OnInit, OnDestroy {
 
       this.RecordVideo(video);
       this.RecordScreen(screenVideo);
-
-      this.questionsIterator = (await this.questionsReceiverService.getQuestions()).entries();
+      // вот здесь в interviewId точно pass-link?
+      this.questionsIterator = (await this.questionsReceiverService.getQuestions(this.interviewId)).entries();
       const source = timer(1000, 1000);
       this.subscribe = source.subscribe(x => {
         this.seconds = x;
