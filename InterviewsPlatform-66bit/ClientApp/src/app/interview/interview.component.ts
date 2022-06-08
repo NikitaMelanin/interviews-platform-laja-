@@ -99,8 +99,7 @@ export class InterviewComponent implements OnInit, OnDestroy {
 
       this.RecordVideo(video);
       this.RecordScreen(screenVideo);
-      // вот здесь в interviewId точно pass-link?
-      this.questionsIterator = (await this.questionsReceiverService.getQuestions(this.interviewId)).entries();
+      this.questionsIterator = (this.questionsReceiverService.getQuestions(this.interviewId).entries());
       const source = timer(1000, 1000);
       this.subscribe = source.subscribe(x => {
         this.seconds = x;
