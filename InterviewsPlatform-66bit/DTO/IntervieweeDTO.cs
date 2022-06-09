@@ -13,6 +13,8 @@ public class IntervieweeDTO
     
     public string Surname { get; set; }
     
+    public string Patronymic { get; set; }
+    
     public string Phone { get; set; }
     
     public string Email { get; set; }
@@ -26,6 +28,7 @@ public class IntervieweeDTO
         Surname = postDto.Surname;
         Phone = postDto.Phone;
         Email = postDto.Email;
+        Patronymic = postDto.Patronymic;
         Interviews = Array.Empty<string>();
     }
 }
