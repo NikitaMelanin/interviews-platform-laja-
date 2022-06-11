@@ -23,7 +23,25 @@ public class InterviewsController : Controller
 
         collection = dbResolver.GetMongoCollection<InterviewDTO>(dbName, "interviews");
     }
+    
+    [HttpPost]
+    [Route("generate-link")]
+    [Produces("application/json")]
+    public async Task<IActionResult> GenerateLink(string id) =>
+        await DbExceptionsHandler.HandleAsync(async () =>
+        {
+            var guid = Guid.NewGuid();
+            var update = Builders<InterviewDTO>.Update
+                .Set(v => v.PassLink, guid.ToString());
 
+            var filter = Builders<InterviewDTO>.Filter.Eq(v => v.Id, id);
+
+            await collection.UpdateOneAsync(filter, update);
+
+            return Ok(guid);
+        }, BadRequest(), NotFound(new {errorText = "Bad id"}));
+    
+    // TODO: passlink
     [HttpPatch]
     [Route("time-stops")]
     [Produces("application/json")]
@@ -50,6 +68,7 @@ public class InterviewsController : Controller
             return Ok(interview);
         }, BadRequest(), NotFound(new {errorText = "Bad id"}));
 
+    // TODO: passlink
     [HttpGet]
     [Route("questions")]
     [Produces("application/json")]
@@ -79,4 +98,6 @@ public class InterviewsController : Controller
 
             return File(videoBytes, "application/octet-stream", enableRangeProcessing: true);
         }, BadRequest(), NotFound(new {errorText = "Bad id"}));
+    
+    
 }

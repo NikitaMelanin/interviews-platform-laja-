@@ -15,6 +15,8 @@ public class InterviewDTO
     [BsonRepresentation(BsonType.ObjectId)]
     public string VideoId { get; set; }
     
+    public string PassLink { get; set; }
+    
     [BsonRepresentation(BsonType.ObjectId)]
     public string ScreenVideoId { get; set; }
 
