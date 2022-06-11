@@ -84,6 +84,7 @@ public class VacanciesInterviewsController : Controller
         var filter =
             builder.Eq(u => u.Name, intervieweePost.Name) &
             builder.Eq(u => u.Surname, intervieweePost.Surname) &
+            builder.Eq(u => u.Patronymic, intervieweePost.Patronymic) &
             (builder.Eq(u => u.Email, intervieweePost.Email) | builder.Eq(u => u.Phone, intervieweePost.Phone));
 
         var intervieweeDb = await collection.FindAsync(filter);

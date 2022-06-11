@@ -67,7 +67,7 @@ public class InterviewsController : Controller
 
     [HttpGet]
     [Route("video")]
-    public async Task<IActionResult> VideoLink(string id)
+    public async Task<IActionResult> Video(string id)
         => await DbExceptionsHandler.HandleAsync(async () =>
         {
             var filter = Builders<InterviewDTO>.Filter.Eq(i => i.Id, id);

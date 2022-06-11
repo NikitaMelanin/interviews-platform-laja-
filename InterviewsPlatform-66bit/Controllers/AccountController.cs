@@ -1,4 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
+using InterviewsPlatform_66bit.DB;
+using InterviewsPlatform_66bit.DTO;
 using InterviewsPlatform_66bit.Services;
 using InterviewsPlatform_66bit.Utils;
 using Microsoft.AspNetCore.Authorization;
@@ -11,10 +13,14 @@ namespace InterviewsPlatform_66bit.Controllers;
 public class AccountController : Controller
 {
     private readonly IIdentifier identifier;
+    private readonly IDBResolver dbResolver;
+    private readonly string dbName;
 
-    public AccountController(IIdentifier identifier)
+    public AccountController(IIdentifier identifier, IDBResolver dbResolver, string dbName)
     {
         this.identifier = identifier;
+        this.dbResolver = dbResolver;
+        this.dbName = dbName;
     }
 
     [HttpGet]
@@ -42,4 +48,15 @@ public class AccountController : Controller
 
         return Ok(new JwtSecurityTokenHandler().WriteToken(token));
     }
+
+    // [HttpPost]
+    // [Authorize(Roles = "administrator")]
+    // [Route("register-hr")]
+    // [Produces("application/json")]
+    // public async Task<IActionResult> RegisterHr([FromBody] UserDTO userDto)
+    // {
+    //     var usersCollection = dbResolver.GetMongoCollection<UserDTO>(dbName, "users");
+    //     
+    //     var filter = 
+    // }
 }
