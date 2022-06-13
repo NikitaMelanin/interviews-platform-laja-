@@ -86,6 +86,20 @@ public class VacanciesController : Controller
         }, BadRequest(), NotFound(new {errorText = "Bad id"}));
 
     [HttpGet]
+    [Produces("application/json")]
+    public async Task<IActionResult> CreatedByUserVacancies()
+        => await DbExceptionsHandler.HandleAsync(async () =>
+        {
+            var userId = User.Identity!.Name!;
+
+            var filter = Builders<VacancyDTO>.Filter.Eq(v => v.CreatorId, userId);
+
+            var vacancies = (await collection.FindAsync(filter)).ToEnumerable();
+
+            return Ok(vacancies);
+        }, BadRequest(), NotFound());
+
+    [HttpGet]
     [Route("{id}")]
     [Produces("application/json")]
     public async Task<IActionResult> Read(string id) =>
