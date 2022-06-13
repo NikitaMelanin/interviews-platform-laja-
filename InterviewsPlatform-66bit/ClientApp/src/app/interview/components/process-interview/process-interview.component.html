@@ -1,0 +1,27 @@
+<div class="text-center">
+  <div class="container">
+    <app-video [screenVideo]="screenVideo" [video]="video"></app-video>
+    <div class="text-danger h4" *ngIf="!isCameraWork">An error occurred while trying to record the webcam</div>
+    <div class="text-danger h4" *ngIf="!isScreenWork">An error occurred while trying to start screen recording</div>
+    <div *ngIf="isAllWork; else notConfirmedWork">
+      <div class="questions">
+        <div class="currentQuestion">
+          {{questions[currentQuestionIndex]}}
+        </div>
+      </div>
+      <div class="buttonName">
+        <button mat-raised-button
+                (click)="nextQuestion()">{{buttonName}}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<ng-template #notConfirmedWork>
+  <p>Please check that the video camera and screen recording are working. In case of incorrect operation, try to reload
+    the page or give the necessary permissions</p>
+  <button (click)="start()" class="btn btn-primary" [disabled]="!(isScreenWork && isCameraWork)">
+    All works!
+  </button>
+</ng-template>

@@ -1,0 +1,42 @@
+<div class="container">
+  <h2 class="h2">Новый соискатель</h2>
+  <form [formGroup]="myForm" (submit)="onSubmit()">
+    <div class="bio-data">
+      <div class="input-form">
+        <label for="name" class="label-form">Имя</label>
+        <input type="text" class="form-control" formControlName="name" id="name">
+      </div>
+      <div class="input-form">
+        <label for="surname" class="label-form">Фамилия</label>
+        <input type="text" class="form-control" formControlName="surname" id="surname">
+      </div>
+      <div class="input-form">
+        <label for="patronymic" class="label-form">Отчество</label>
+        <input type="text" class="form-control" formControlName="patronymic" id="patronymic">
+      </div>
+    </div>
+    <div class="data-header">
+      <h2 class="h2">Контактные данные</h2>
+    </div>
+    <div class="another-data">
+      <div class="input-form">
+        <label for="phone" class="label-form">Телефон</label>
+        <input type="phone" class="form-control" formControlName="phone" id="phone">
+      </div>
+      <div class="input-form">
+        <label for="email" class="label-form">Почта</label>
+        <input type="email" class="form-control" formControlName="email" id="email">
+      </div>
+    </div>
+  </form>
+  <div class="form-buttons">
+    <button type="button" class="accept-button" (click)="cancel()">
+      Отменить
+    </button>
+    <button type="submit" (click)="onSubmit()" [disabled]="!myForm.valid" class="accept-button">
+      Завершить и перейти к интервью
+    </button>
+  </div>
+</div>
+
+
