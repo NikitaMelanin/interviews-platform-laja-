@@ -9,7 +9,7 @@ using MongoDB.Driver;
 namespace InterviewsPlatform_66bit.Controllers;
 
 [Authorize]
-[Route("/interviews/{id}")]
+[Route("/interviews")]
 public class InterviewsController : Controller
 {
     private readonly IDBResolver dbResolver;
@@ -41,14 +41,13 @@ public class InterviewsController : Controller
             return Ok(guid);
         }, BadRequest(), NotFound(new {errorText = "Bad id"}));
     
-    // TODO: passlink
     [HttpPatch]
-    [Route("time-stops")]
+    [Route("{passLink}/time-stops")]
     [Produces("application/json")]
-    public async Task<IActionResult> AddTimeStops(string id, [FromBody] TimeStopDTO times) =>
+    public async Task<IActionResult> AddTimeStops(string passLink, [FromBody] TimeStopDTO times) =>
         await DbExceptionsHandler.HandleAsync(async () =>
         {
-            var filter = Builders<InterviewDTO>.Filter.Eq(i => i.Id, id);
+            var filter = Builders<InterviewDTO>.Filter.Eq(i => i.PassLink, passLink);
             var update = Builders<InterviewDTO>.Update.PushEach(i => i.TimeStops, times.TimeStops);
 
             var updateRes = await collection.FindOneAndUpdateAsync(filter, update);
@@ -67,25 +66,30 @@ public class InterviewsController : Controller
 
             return Ok(interview);
         }, BadRequest(), NotFound(new {errorText = "Bad id"}));
-
-    // TODO: passlink
+    
     [HttpGet]
-    [Route("questions")]
+    [Route("{passLink}/questions")]
     [Produces("application/json")]
-    public async Task<IActionResult> Questions(string id)
+    public async Task<IActionResult> Questions(string passLink)
         => await DbExceptionsHandler.HandleAsync(async () =>
         {
             var vacanciesCollection = dbResolver.GetMongoCollection<VacancyDTO>(dbName, "vacancies");
+            
+            var filter = Builders<InterviewDTO>.Filter.Eq(i => i.PassLink, passLink);
 
-            var filter = Builders<VacancyDTO>.Filter.AnyEq(v => v.Interviews, id);
+            var interview = (await collection.FindAsync(filter)).Single();
 
-            var vacancy = (await vacanciesCollection.FindAsync(filter)).Single();
+            var id = interview.Id;
+
+            var filterVacancy = Builders<VacancyDTO>.Filter.AnyEq(v => v.Interviews, id);
+
+            var vacancy = (await vacanciesCollection.FindAsync(filterVacancy)).Single();
 
             return Ok(vacancy.Questions);
         }, BadRequest(), NotFound(new {errorText = "Bad id"}));
 
     [HttpGet]
-    [Route("video")]
+    [Route("{id}/video")]
     public async Task<IActionResult> Video(string id)
         => await DbExceptionsHandler.HandleAsync(async () =>
         {
