@@ -25,7 +25,7 @@ public class InterviewsController : Controller
     }
     
     [HttpPost]
-    [Route("generate-link")]
+    [Route("{id}/generate-link")]
     [Produces("application/json")]
     public async Task<IActionResult> GenerateLink(string id) =>
         await DbExceptionsHandler.HandleAsync(async () =>
@@ -56,6 +56,7 @@ public class InterviewsController : Controller
         }, BadRequest(), NotFound(new {errorText = "Bad id"}));
 
     [HttpGet]
+    [Route("{id}")]
     [Produces("application/json")]
     public async Task<IActionResult> Read(string id) =>
         await DbExceptionsHandler.HandleAsync(async () =>
@@ -100,7 +101,7 @@ public class InterviewsController : Controller
             var videoBytes = await dbResolver.GetGridFsBucket(dbName)
                 .DownloadAsBytesAsync(ObjectId.Parse(interview.VideoId));
 
-            return File(videoBytes, "application/octet-stream", enableRangeProcessing: true);
+            return File(videoBytes, "application/octet-stream", true);
         }, BadRequest(), NotFound(new {errorText = "Bad id"}));
     
     

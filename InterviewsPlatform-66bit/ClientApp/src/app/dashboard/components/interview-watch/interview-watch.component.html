@@ -4,9 +4,7 @@
       {{item.title}} - {{item.offset | minuteSeconds}}
     </li>
   </ul>
-  <video controls width="250">
-    <source [src]="videoLink"
-            type="video/mp4">
+  <video controls width="250" [src]="videoBlobLink" type="video/x-matroska">
   </video>
 
 </div>
