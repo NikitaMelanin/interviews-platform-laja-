@@ -27,9 +27,9 @@ public class VacanciesInterviewsController : Controller
     }
     
     [HttpPost]
-    [Route("/vacancies/{passLink}/interviews")]
+    [Route("/vacancies/{id}/interviews")]
     [Produces("application/json")]
-    public async Task<IActionResult> AddInterview(string passLink, [FromBody] IntervieweePostDTO intervieweePost) =>
+    public async Task<IActionResult> AddInterview(string id, [FromBody] IntervieweePostDTO intervieweePost) =>
         await DbExceptionsHandler.HandleAsync(async () =>
         {
             var intervieweesCollection = dbResolver.GetMongoCollection<IntervieweeDTO>(dbName, "interviewees");
@@ -42,7 +42,7 @@ public class VacanciesInterviewsController : Controller
                 IntervieweeId = interviewee.Id
             };
 
-            var filterVacancy = Builders<VacancyDTO>.Filter.Eq(v => v.PassLink, passLink);
+            var filterVacancy = Builders<VacancyDTO>.Filter.Eq(v => v.Id, id);
             var updateVacancy = Builders<VacancyDTO>.Update.Push(v => v.Interviews, interview.Id);
 
             var filterInterviewee = Builders<IntervieweeDTO>.Filter.Eq(i => i.Id, interviewee.Id);
