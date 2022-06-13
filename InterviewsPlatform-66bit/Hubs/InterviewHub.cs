@@ -30,14 +30,14 @@ public class InterviewHub : Hub
         await ((GridFSUploadStream) Context.Items["screenVideoStream"]!).WriteAsync(bytes);
     }
 
-    public async void AttachStreamsToInterview(string interviewId)
+    public async void AttachStreamsToInterview(string interviewPassLink)
     {
         var collection = dbResolver.GetMongoCollection<InterviewDTO>(dbName, "interviews");
         
         var videoStreamId = ((GridFSUploadStream) Context.Items["videoStream"]!).Id;
         var screenVideoStreamId = ((GridFSUploadStream) Context.Items["screenVideoStream"]!).Id;
 
-        var filter = Builders<InterviewDTO>.Filter.Eq(i => i.Id, interviewId);
+        var filter = Builders<InterviewDTO>.Filter.Eq(i => i.PassLink, interviewPassLink);
 
         var update = Builders<InterviewDTO>.Update
             .Set(i => i.VideoId, videoStreamId.ToString())
