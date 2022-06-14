@@ -29,7 +29,7 @@ export class CreateVacancyComponent implements OnInit, OnDestroy {
       description: this.myForm.value.description,
       questions: this.myForm.value.questions?.map((x: { title: string }) => x.title) || [],
     }).subscribe(x => {
-      this.router.navigate(['dashboard'])
+      this.router.navigate(['vacancies'])
     });
   }
 

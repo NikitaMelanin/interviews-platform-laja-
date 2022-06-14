@@ -37,7 +37,7 @@ import {InterviewModule} from "./interview/interview.module";
         canActivate: []
       },
       {
-        path: 'dashboard',
+        path: 'vacancies',
         loadChildren: () => import('./dashboard/dashboard.module').then(x => x.DashboardModule),
         canActivate: [AuthGuard]
       },
