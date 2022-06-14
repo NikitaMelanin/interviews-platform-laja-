@@ -67,7 +67,7 @@ export class VacancyEditComponent {
     // this.httpClient
     //   .delete("https://localhost:44423/api/vacancies/" + this.id, {})
     //   .subscribe((x: any) => {
-        this.router.navigate(['dashboard']);
+        this.router.navigate(['vacancies']);
       // });
   }
 

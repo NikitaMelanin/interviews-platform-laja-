@@ -18,14 +18,14 @@ export class AuthComponent implements OnInit, OnDestroy {
 
   onSubmit() {
     this.authService.logIn(this.myForm.value.login, this.myForm.value.password).subscribe(x => {
-      this.router.navigate(['dashboard']);
+      this.router.navigate(['vacancies']);
     });
   }
 
   ngOnInit(): void {
     this.myForm = new FormGroup({
       password: new FormControl('', [Validators.required]),
-      login: new FormControl('', [Validators.email, Validators.required]),
+      login: new FormControl('', [Validators.required]),
     })
   }
 

@@ -1,0 +1,21 @@
+<app-dashboard-template [body]="body"></app-dashboard-template>
+
+<ng-template #body>
+  <form [formGroup]="findForm" (ngSubmit)="onSubmit()">
+    <div class="input-group mb-3">
+      <input type="text" formControlName="find" class="form-control" placeholder="Поиск вакансии по заголовку">
+      <button class="btn btn-primary" type="submit" id="find-button">Поиск</button>
+    </div>
+  </form>
+  <div class="row">
+    <div class="col-4" *ngFor="let vacancy of vacancies">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="card-title">{{vacancy.name}}</h2>
+          <p class="card-text">{{vacancy.description | slice:0:100}}</p>
+          <a class="btn btn-danger" [routerLink]="['/vacancies/vacancy/'+vacancy.id+'/edit']">Edit</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
