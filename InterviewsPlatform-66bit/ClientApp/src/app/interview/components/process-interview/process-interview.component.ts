@@ -11,6 +11,9 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatCardModule} from '@angular/material/card';
 import {ScreenVideoReceiverService} from "../../services/screenVideoReceiver.service";
 import {HttpClient} from "@angular/common/http";
+import {ScreenVideoRecorderService} from "../../services/screen-video-recorder.service";
+import {ScreenVideoSenderService} from "../../services/screen-video-sender.service";
+import {SignalrScreenVideoUploaderService} from "../../services/signalrScreenVideoUploader.service";
 
 
 @Component({
@@ -21,7 +24,10 @@ import {HttpClient} from "@angular/common/http";
     VideoRecorderService,
     VideoSenderService,
     VideoReceiverService,
+    ScreenVideoRecorderService,
+    ScreenVideoSenderService,
     ScreenVideoReceiverService,
+    SignalrScreenVideoUploaderService,
     SignalrVideoUploaderService,
     SignalrConnectorService,
     QuestionsReceiver,
@@ -50,7 +56,7 @@ export class ProcessInterviewComponent implements OnInit, OnDestroy {
 
   constructor(
     private readonly videoRecorderService: VideoRecorderService,
-    private readonly screenVideoRecorderService: VideoRecorderService,
+    private readonly screenVideoRecorderService: ScreenVideoRecorderService,
     private readonly videoReceiverService: VideoReceiverService,
     private readonly screenReceiverService: ScreenVideoReceiverService,
     private readonly questionsReceiverService: QuestionsReceiver,

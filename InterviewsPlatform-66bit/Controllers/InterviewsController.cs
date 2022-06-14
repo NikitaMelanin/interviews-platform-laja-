@@ -100,7 +100,7 @@ public class InterviewsController : Controller
 
             var videoBytes = await dbResolver.GetGridFsBucket(dbName)
                 .DownloadAsBytesAsync(ObjectId.Parse(interview.VideoId));
-
+            
             return File(videoBytes, "application/octet-stream", true);
         }, BadRequest(), NotFound(new {errorText = "Bad id"}));
     

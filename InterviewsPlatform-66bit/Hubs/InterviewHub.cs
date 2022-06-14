@@ -1,4 +1,5 @@
-﻿using InterviewsPlatform_66bit.DB;
+﻿using System.Diagnostics.CodeAnalysis;
+using InterviewsPlatform_66bit.DB;
 using InterviewsPlatform_66bit.DTO;
 using Microsoft.AspNetCore.SignalR;
 using MongoDB.Bson;
@@ -18,18 +19,19 @@ public class InterviewHub : Hub
         this.dbName = dbName;
     }
     
-    public async void AddVideoBytes(string base64Bytes)
+    public void AddVideoBytes(string base64Bytes)
     {
         var bytes = Convert.FromBase64String(base64Bytes);
-        await ((GridFSUploadStream) Context.Items["videoStream"]!).WriteAsync(bytes);
+
+        ((GridFSUploadStream) Context.Items["videoStream"]!).Write(bytes);
     }
 
-    public async void AddScreenVideoBytes(string base64Bytes)
+    public void AddScreenVideoBytes(string base64Bytes)
     {
         var bytes = Convert.FromBase64String(base64Bytes);
-        await ((GridFSUploadStream) Context.Items["screenVideoStream"]!).WriteAsync(bytes);
+        ((GridFSUploadStream) Context.Items["screenVideoStream"]!).Write(bytes);
     }
-
+    
     public async void AttachStreamsToInterview(string interviewPassLink)
     {
         var collection = dbResolver.GetMongoCollection<InterviewDTO>(dbName, "interviews");
@@ -61,7 +63,7 @@ public class InterviewHub : Hub
     {
         await ((GridFSUploadStream) Context.Items["videoStream"]!).CloseAsync();
         await ((GridFSUploadStream) Context.Items["screenVideoStream"]!).CloseAsync();
-
+        
         await base.OnDisconnectedAsync(exception);
     }
 }
