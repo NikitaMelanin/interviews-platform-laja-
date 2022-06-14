@@ -104,5 +104,19 @@ public class InterviewsController : Controller
             return File(videoBytes, "application/octet-stream", true);
         }, BadRequest(), NotFound(new {errorText = "Bad id"}));
     
-    
+    [HttpGet]
+    [Route("{id}/screen-video")]
+    public async Task<IActionResult> ScreenVideo(string id)
+        => await DbExceptionsHandler.HandleAsync(async () =>
+        {
+            var filter = Builders<InterviewDTO>.Filter.Eq(i => i.Id, id);
+
+            var interview = (await collection.FindAsync(filter)).Single();
+
+            var videoBytes = await dbResolver.GetGridFsBucket(dbName)
+                .DownloadAsBytesAsync(ObjectId.Parse(interview.ScreenVideoId));
+            
+            return File(videoBytes, "application/octet-stream", true);
+        }, BadRequest(), NotFound(new {errorText = "Bad id"}));
+
 }
