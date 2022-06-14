@@ -27,7 +27,6 @@ public class VacanciesInterviewsController : Controller
     }
     
     [HttpPost]
-    [Route("/vacancies/{id}/interviews")]
     [Produces("application/json")]
     public async Task<IActionResult> AddInterview(string id, [FromBody] IntervieweePostDTO intervieweePost) =>
         await DbExceptionsHandler.HandleAsync(async () =>

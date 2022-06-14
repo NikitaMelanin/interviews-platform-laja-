@@ -15,8 +15,6 @@ public class VacancyDTO
 
     [BsonRepresentation(BsonType.ObjectId)]
     public string CreatorId { get; set; }
-    
-    public string PassLink { get; set; }
 
     public string[] Questions { get; set; }
     

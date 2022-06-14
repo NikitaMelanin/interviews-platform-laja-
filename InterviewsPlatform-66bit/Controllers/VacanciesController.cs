@@ -24,30 +24,6 @@ public class VacanciesController : Controller
     }
 
     [HttpPost]
-    [Route("{id}/generateLink")]
-    [Produces("application/json")]
-    public async Task<IActionResult> GenerateLink(string id) =>
-        await DbExceptionsHandler.HandleAsync(async () =>
-        {
-            var guid = Guid.NewGuid();
-            var update = Builders<VacancyDTO>.Update
-                .Set(v => v.PassLink, guid.ToString());
-
-            var filter = Builders<VacancyDTO>.Filter.Eq(v => v.Id, id);
-            
-            var vacancy = (await collection.FindAsync(filter)).Single();
-
-            if (vacancy.CreatorId != User.Identity!.Name!)
-            {
-                return Forbid();
-            }
-
-            await collection.UpdateOneAsync(filter, update);
-
-            return Ok(guid);
-        }, BadRequest(), NotFound(new {errorText = "Bad id"}));
-
-    [HttpPost]
     [Produces("application/json")]
     public async Task<IActionResult> Create([FromBody] VacancyPostDTO postDto)
     {
