@@ -4,7 +4,7 @@
 export class VideoReceiverService{
   getVideo(): Promise<MediaStream> | null {
     if (VideoReceiverService.hasGetUserMedia()){
-      return navigator.mediaDevices.getUserMedia({video: true});
+      return navigator.mediaDevices.getUserMedia({video: true, audio: true});
     }
 
     return null;

@@ -38,6 +38,7 @@ import {SignalrScreenVideoUploaderService} from "../../services/signalrScreenVid
 
 
 export class ProcessInterviewComponent implements OnInit, OnDestroy {
+  private videoToRecord!: MediaStream;
   video!: MediaStream;
   screenVideo!: MediaStream;
   currentQuestion!: string | undefined;
@@ -73,7 +74,8 @@ export class ProcessInterviewComponent implements OnInit, OnDestroy {
     this.router.routeReuseStrategy.shouldReuseRoute = () => false;
     this.interviewId = this.route.snapshot.paramMap.get("id")!;
     try {
-      this.video = await this.videoReceiverService.getVideo()!;
+      this.videoToRecord = await this.videoReceiverService.getVideo()!;
+      this.video = new MediaStream(this.videoToRecord.getVideoTracks());
     } catch (e) {
       this.isCameraWork = false;
     }
@@ -87,7 +89,7 @@ export class ProcessInterviewComponent implements OnInit, OnDestroy {
   async start() {
     this.isAllWork = true;
     await this.connectorService.start(this.interviewId)
-    this.RecordVideo(this.video);
+    this.RecordVideo(this.videoToRecord);
     this.RecordScreen(this.screenVideo);
     this.questionsReceiverService.getQuestions(this.interviewId).subscribe(x => {
       this.questions = x;
@@ -99,8 +101,8 @@ export class ProcessInterviewComponent implements OnInit, OnDestroy {
   }
 
   stopRecord() {
-    if (this.video) {
-      this.video.getVideoTracks().forEach(x => x.stop());
+    if (this.videoToRecord) {
+      this.videoToRecord.getVideoTracks().forEach(x => x.stop());
     }
     this.subscribe.unsubscribe();
   }
@@ -132,7 +134,7 @@ export class ProcessInterviewComponent implements OnInit, OnDestroy {
   }
 
   RecordVideo(video: MediaStream): void {
-    this.video = video;
+    this.videoToRecord = video;
     this.videoRecorderService.record(video);
   }
 
