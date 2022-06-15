@@ -1,0 +1,19 @@
+<div class="container">
+  <div class="row">
+    <div class="col-2">
+      <nav class="nav flex-column">
+        <a class="btn btn-outline-info mb-2" [routerLinkActive]="['btn-primary']"
+           [routerLink]="['/vacancies/vacancies']">Вакансии</a>
+        <a class="btn btn-outline-info" [routerLinkActive]="['btn-primary']" [routerLink]="['/vacancies/candidates']">Кандидаты</a>
+      </nav>
+    </div>
+    <div class="col">
+      <a class="btn btn-primary" [routerLink]="['/vacancies/vacancy/create']">+ Вакансия</a>
+      <a class="btn btn-primary mx-1" [routerLink]="['/vacancies/candidate/create']">+ Кандидат</a>
+      <a class="btn btn-primary" [routerLink]="['/vacancies/hr/create']">+ HR аккаунт</a>
+      <div class="mt-4">
+        <ng-template [ngTemplateOutlet]="body"></ng-template>
+      </div>
+    </div>
+  </div>
+</div>
