@@ -8,7 +8,7 @@ using MongoDB.Driver;
 
 namespace InterviewsPlatform_66bit.Controllers;
 
-[Authorize]
+[Authorize(Roles = $"{Roles.ADMINISTRATOR},{Roles.HR}")]
 [Route("/vacancies/{id}/interviews")]
 public class VacanciesInterviewsController : Controller
 {

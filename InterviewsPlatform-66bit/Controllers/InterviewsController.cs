@@ -8,7 +8,7 @@ using MongoDB.Driver;
 
 namespace InterviewsPlatform_66bit.Controllers;
 
-[Authorize]
+[Authorize(Roles = $"{Roles.ADMINISTRATOR},{Roles.HR}")]
 [Route("/interviews")]
 public class InterviewsController : Controller
 {
@@ -42,6 +42,7 @@ public class InterviewsController : Controller
         }, BadRequest(), NotFound(new {errorText = "Bad id"}));
     
     [HttpPatch]
+    [AllowAnonymous]
     [Route("{passLink}/time-stops")]
     [Produces("application/json")]
     public async Task<IActionResult> AddTimeStops(string passLink, [FromBody] TimeStopDTO times) =>
@@ -69,6 +70,7 @@ public class InterviewsController : Controller
         }, BadRequest(), NotFound(new {errorText = "Bad id"}));
     
     [HttpGet]
+    [AllowAnonymous]
     [Route("{passLink}/questions")]
     [Produces("application/json")]
     public async Task<IActionResult> Questions(string passLink)
