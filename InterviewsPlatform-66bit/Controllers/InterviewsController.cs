@@ -119,4 +119,22 @@ public class InterviewsController : Controller
             return File(videoBytes, "application/octet-stream", true);
         }, BadRequest(), NotFound(new {errorText = "Bad id"}));
 
+    [HttpGet]
+    [Route("{id}/interviewee")]
+    public async Task<IActionResult> Interviewee(string id)
+        => await DbExceptionsHandler.HandleAsync(async () =>
+        {
+            var filter = Builders<InterviewDTO>.Filter.Eq(i => i.Id, id);
+
+            var interview = (await collection.FindAsync(filter)).Single();
+
+            var intervieweesCollection = dbResolver.GetMongoCollection<IntervieweeDTO>(dbName, "interviwees");
+            
+            var intervieweeFilter = Builders<IntervieweeDTO>.Filter.Eq(i => i.Id, interview.IntervieweeId);
+
+            var interviewee = (await intervieweesCollection.FindAsync(intervieweeFilter)).Single();
+
+            return Ok(interviewee);
+        }, BadRequest(), NotFound(new {errorText = "Bad id"}));
+
 }

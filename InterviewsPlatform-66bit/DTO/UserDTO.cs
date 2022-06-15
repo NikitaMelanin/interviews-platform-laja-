@@ -10,7 +10,18 @@ public class UserDTO
     public string Id { get; set; }
     public string Name { get; set; }
     public string Surname { get; set; }
+    public string Email { get; set; }
     public string Login { get; set; }
     public string Password { get; set; }
     public string[] Roles { get; set; }
+
+    public UserDTO(UserPostDTO userPostDto)
+    {
+        Id = ObjectId.GenerateNewId().ToString();
+        Name = userPostDto.Name;
+        Surname = userPostDto.Surname;
+        Email = userPostDto.Email;
+        Login = userPostDto.Login;
+        Password = userPostDto.Password;
+    }
 }

@@ -6,6 +6,7 @@ using InterviewsPlatform_66bit.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using MongoDB.Driver;
 
 namespace InterviewsPlatform_66bit.Controllers;
 
@@ -49,14 +50,31 @@ public class AccountController : Controller
         return Ok(new JwtSecurityTokenHandler().WriteToken(token));
     }
 
-    // [HttpPost]
-    // [Authorize(Roles = "administrator")]
-    // [Route("register-hr")]
-    // [Produces("application/json")]
-    // public async Task<IActionResult> RegisterHr([FromBody] UserDTO userDto)
-    // {
-    //     var usersCollection = dbResolver.GetMongoCollection<UserDTO>(dbName, "users");
-    //     
-    //     var filter = 
-    // }
+    [HttpPost]
+    [Authorize(Roles = Roles.ADMINISTRATOR)]
+    [Route("register-hr")]
+    [Produces("application/json")]
+    public async Task<IActionResult> RegisterHr([FromBody] UserPostDTO userPostDto)
+        => await DbExceptionsHandler.HandleAsync(async () =>
+        {
+            var usersCollection = dbResolver.GetMongoCollection<UserDTO>(dbName, "users");
+
+            var filterBuilder = Builders<UserDTO>.Filter;
+
+            var filter = filterBuilder.Eq(u => u.Login, userPostDto.Login) &
+                         filterBuilder.Eq(u => u.Password, userPostDto.Password);
+
+            var users = await usersCollection.FindAsync(filter);
+
+            if (await users.AnyAsync())
+            {
+                return Conflict(new {errorText = "User with this login and password already registered"});
+            }
+
+            var user = new UserDTO(userPostDto) {Roles = new[] {Roles.HR}};
+
+            await usersCollection.InsertOneAsync(user);
+
+            return Ok(user.Id);
+        }, BadRequest(), NotFound());
 }
