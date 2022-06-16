@@ -35,8 +35,11 @@ export class AuthService {
         token: token as string,
         isAuthorized: true,
       };
-      localStorage.setItem('auth', token as string)
-      this.currentUserSubject.next(user)
+      localStorage.setItem('auth', token as string);
+      this.currentUserSubject.next(user);
+      this._http.get('https://localhost:44423/api/account/roles', {}).subscribe((x: any) => {
+        localStorage.setItem('roles', x)
+      })
       return user;
     }))
   }

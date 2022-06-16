@@ -7,14 +7,17 @@
     </div>
     <div class="mb-3">
       <label for="password" class="form-label">Пароль</label>
-      <input type="text" class="form-control" formControlName="password" id="password">
+      <input type="password" class="form-control" formControlName="password" id="password">
     </div>
     <div class="mb-3">
-      <label for="name" class="form-label">ФИО</label>
+      <label for="name" class="form-label">Фамилия</label>
+      <input type="text" class="form-control" formControlName="surname" id="surname">
+    </div>
+    <div class="mb-3">
+      <label for="name" class="form-label">Имя</label>
       <input type="text" class="form-control" formControlName="name" id="name">
     </div>
-    <button type="submit" class="btn btn-outline-success"
-            [disabled]="!myForm.valid">
+    <button type="submit" class="btn btn-outline-success" [disabled]="!myForm.valid">
       <i class="bi bi-pen"></i>
       Создать
     </button>

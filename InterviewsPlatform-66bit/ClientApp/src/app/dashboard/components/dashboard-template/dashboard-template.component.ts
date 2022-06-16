@@ -20,5 +20,10 @@ export class DashboardTemplateComponent implements OnInit {
 
 
   ngOnInit(): void {
+    const roles = localStorage.getItem('roles')!.split(',');
+    this.sideRoutes = this.sideRoutes.filter(route =>
+      route.roles?.some(x => roles.includes(x)));
+    this.additionalRoutes = this.additionalRoutes.filter(route =>
+      route.roles?.some(x => roles.includes(x)));
   }
 }

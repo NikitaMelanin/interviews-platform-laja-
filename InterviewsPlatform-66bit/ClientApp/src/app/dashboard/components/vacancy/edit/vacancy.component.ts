@@ -2,7 +2,7 @@ import {Component} from '@angular/core';
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {HttpClient} from "@angular/common/http";
 import {ActivatedRoute, Router} from "@angular/router";
-import {IRoute, mainRoutes, vacancyRoutes} from "../../routes";
+import {IRoute, vacancyRoutes} from "../../routes";
 
 @Component({
   selector: 'app-nav-menu',
@@ -69,11 +69,11 @@ export class VacancyComponent {
   }
 
   deleteVacancy() {
-    // this.httpClient
-    //   .delete("https://localhost:44423/api/vacancies/" + this.id, {})
-    //   .subscribe((x: any) => {
-    this.router.navigate(['vacancies']);
-    // });
+    this.httpClient
+      .delete("https://localhost:44423/api/vacancies/" + this.id, {})
+      .subscribe(() => {
+        this.router.navigate(['dashboard/vacancies']);
+    });
   }
 
   addQuestion(question = '') {

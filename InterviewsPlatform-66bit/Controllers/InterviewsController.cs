@@ -8,7 +8,7 @@ using MongoDB.Driver;
 
 namespace InterviewsPlatform_66bit.Controllers;
 
-[Authorize(Roles = $"{Roles.ADMINISTRATOR},{Roles.HR}")]
+//[Authorize(Roles = $"{Roles.ADMINISTRATOR},{Roles.HR}")]
 [Route("/interviews")]
 public class InterviewsController : Controller
 {
@@ -23,7 +23,7 @@ public class InterviewsController : Controller
 
         collection = dbResolver.GetMongoCollection<InterviewDTO>(dbName, "interviews");
     }
-    
+
     [HttpPost]
     [Route("{id}/generate-link")]
     [Produces("application/json")]
@@ -40,7 +40,7 @@ public class InterviewsController : Controller
 
             return Ok(guid);
         }, BadRequest(), NotFound(new {errorText = "Bad id"}));
-    
+
     [HttpPatch]
     [AllowAnonymous]
     [Route("{passLink}/time-stops")]
@@ -51,9 +51,24 @@ public class InterviewsController : Controller
             var filter = Builders<InterviewDTO>.Filter.Eq(i => i.PassLink, passLink);
             var update = Builders<InterviewDTO>.Update.PushEach(i => i.TimeStops, times.TimeStops);
 
-            var updateRes = await collection.FindOneAndUpdateAsync(filter, update);
+            await collection.FindOneAndUpdateAsync(filter, update);
 
-            return Ok(updateRes.TimeStops.Concat(times.TimeStops));
+            return Ok();
+        }, BadRequest(), NotFound(new {errorText = "Bad id"}));
+
+    [HttpPatch]
+    [AllowAnonymous]
+    [Route("{passLink}/time-stops/reset")]
+    [Produces("application/json")]
+    public async Task<IActionResult> ResetTimeStops(string passLink, [FromBody] TimeStopDTO times) =>
+        await DbExceptionsHandler.HandleAsync(async () =>
+        {
+            var filter = Builders<InterviewDTO>.Filter.Eq(i => i.PassLink, passLink);
+            var update = Builders<InterviewDTO>.Update.Set(i => i.TimeStops, new TimeStop[] { });
+
+            await collection.FindOneAndUpdateAsync(filter, update);
+
+            return Ok();
         }, BadRequest(), NotFound(new {errorText = "Bad id"}));
 
     [HttpGet]
@@ -68,7 +83,7 @@ public class InterviewsController : Controller
 
             return Ok(interview);
         }, BadRequest(), NotFound(new {errorText = "Bad id"}));
-    
+
     [HttpGet]
     [AllowAnonymous]
     [Route("{passLink}/questions")]
@@ -77,7 +92,7 @@ public class InterviewsController : Controller
         => await DbExceptionsHandler.HandleAsync(async () =>
         {
             var vacanciesCollection = dbResolver.GetMongoCollection<VacancyDTO>(dbName, "vacancies");
-            
+
             var filter = Builders<InterviewDTO>.Filter.Eq(i => i.PassLink, passLink);
 
             var interview = (await collection.FindAsync(filter)).Single();
@@ -92,6 +107,29 @@ public class InterviewsController : Controller
         }, BadRequest(), NotFound(new {errorText = "Bad id"}));
 
     [HttpGet]
+    [AllowAnonymous]
+    [Route("{passLink}/description")]
+    [Produces("application/json")]
+    public async Task<IActionResult> Description(string passLink)
+        => await DbExceptionsHandler.HandleAsync(async () =>
+        {
+            var vacanciesCollection = dbResolver.GetMongoCollection<VacancyDTO>(dbName, "vacancies");
+
+            var filter = Builders<InterviewDTO>.Filter.Eq(i => i.PassLink, passLink);
+
+            var interview = (await collection.FindAsync(filter)).Single();
+
+            var id = interview.Id;
+
+            var filterVacancy = Builders<VacancyDTO>.Filter.AnyEq(v => v.Interviews, id);
+
+            var vacancy = (await vacanciesCollection.FindAsync(filterVacancy)).Single();
+
+            return Ok(vacancy.Description);
+        }, BadRequest(), NotFound(new {errorText = "Bad id"}));
+
+    
+    [HttpGet]
     [Route("{id}/video")]
     public async Task<IActionResult> Video(string id)
         => await DbExceptionsHandler.HandleAsync(async () =>
@@ -102,10 +140,10 @@ public class InterviewsController : Controller
 
             var videoBytes = await dbResolver.GetGridFsBucket(dbName)
                 .DownloadAsBytesAsync(ObjectId.Parse(interview.VideoId));
-            
+
             return File(videoBytes, "application/octet-stream", true);
         }, BadRequest(), NotFound(new {errorText = "Bad id"}));
-    
+
     [HttpGet]
     [Route("{id}/screen-video")]
     public async Task<IActionResult> ScreenVideo(string id)
@@ -117,7 +155,7 @@ public class InterviewsController : Controller
 
             var videoBytes = await dbResolver.GetGridFsBucket(dbName)
                 .DownloadAsBytesAsync(ObjectId.Parse(interview.ScreenVideoId));
-            
+
             return File(videoBytes, "application/octet-stream", true);
         }, BadRequest(), NotFound(new {errorText = "Bad id"}));
 
@@ -131,12 +169,11 @@ public class InterviewsController : Controller
             var interview = (await collection.FindAsync(filter)).Single();
 
             var intervieweesCollection = dbResolver.GetMongoCollection<IntervieweeDTO>(dbName, "interviwees");
-            
+
             var intervieweeFilter = Builders<IntervieweeDTO>.Filter.Eq(i => i.Id, interview.IntervieweeId);
 
             var interviewee = (await intervieweesCollection.FindAsync(intervieweeFilter)).Single();
 
             return Ok(interviewee);
         }, BadRequest(), NotFound(new {errorText = "Bad id"}));
-
 }

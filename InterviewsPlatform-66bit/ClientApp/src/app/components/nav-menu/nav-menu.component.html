@@ -3,7 +3,7 @@
     class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3"
   >
     <div class="container">
-      <a class="navbar-brand" [routerLink]="['/']">InterviewsPlatform_66bit</a>
+      <a class="navbar-brand" [routerLink]="['/dashboard/vacancies']">InterviewsPlatform_66bit</a>
       <button
         class="navbar-toggler"
         type="button"
@@ -20,13 +20,6 @@
         [ngClass]="{ show: isExpanded }"
       >
         <ul class="navbar-nav flex-grow">
-          <li
-            class="nav-item"
-            [routerLinkActive]="['link-active']"
-            [routerLinkActiveOptions]="{ exact: true }"
-          >
-            <a class="nav-link text-dark active" [routerLink]="['/']">Home</a>
-          </li>
           <li class="nav-item" *ngIf="currentUser" [routerLinkActive]="['link-active']">
             <a class="nav-link text-dark" [routerLink]="['/dashboard/vacancies']">HR Dashboard</a>
           </li>
