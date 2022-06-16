@@ -8,6 +8,13 @@ export interface IVacancy {
   interviews: string[];
 }
 
+export interface ICandidate {
+  name: string;
+  surname: string;
+  patronymic: string;
+  phone: string;
+  email: string;
+}
 
 export interface IInterview {
   id: string;

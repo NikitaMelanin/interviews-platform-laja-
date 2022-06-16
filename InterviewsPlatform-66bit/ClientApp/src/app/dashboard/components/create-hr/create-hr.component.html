@@ -7,18 +7,20 @@
       <label for="login" class="label-form">Логин</label>
       <input type="text" class="form-control" formControlName="login" id="login">
     </div>
-    <div class="input-form">
-      <label for="password" class="label-form">Пароль</label>
+    <div class="mb-3">
+      <label for="password" class="form-label">Пароль</label>
       <input type="password" class="form-control" formControlName="password" id="password">
     </div>
-    <div class="input-form">
-      <label for="name" class="label-form">ФИО</label>
+    <div class="mb-3">
+      <label for="name" class="form-label">Фамилия</label>
+      <input type="text" class="form-control" formControlName="surname" id="surname">
+    </div>
+    <div class="mb-3">
+      <label for="name" class="form-label">Имя</label>
       <input type="text" class="form-control" formControlName="name" id="name">
     </div>
-  </form>
-  <div class="form-buttons">
-    <button type="submit" class="accept-button" (click)="onSubmit()"
-            [disabled]="!myForm.valid">
+    <button type="submit" class="btn btn-outline-success" [disabled]="!myForm.valid">
+      <i class="bi bi-pen"></i>
       Создать
     </button>
   </div>

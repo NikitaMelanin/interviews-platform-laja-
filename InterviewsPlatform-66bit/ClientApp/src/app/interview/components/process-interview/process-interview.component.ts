@@ -87,17 +87,19 @@ export class ProcessInterviewComponent implements OnInit, OnDestroy {
   }
 
   async start() {
-    this.isAllWork = true;
-    await this.connectorService.start(this.interviewId)
-    this.RecordVideo(this.videoToRecord);
-    this.RecordScreen(this.screenVideo);
-    this.questionsReceiverService.getQuestions(this.interviewId).subscribe(x => {
-      this.questions = x;
-    });
-    const source = timer(1000, 1000);
-    this.subscribe = source.subscribe(x => {
-      this.seconds = x;
-    });
+    this.httpClient.patch('https://localhost:44423/api/interviews/' + this.interviewId + '/time-stops/reset', {}).subscribe(async () => {
+      this.isAllWork = true;
+      await this.connectorService.start(this.interviewId)
+      this.RecordVideo(this.videoToRecord);
+      this.RecordScreen(this.screenVideo);
+      this.questionsReceiverService.getQuestions(this.interviewId).subscribe(x => {
+        this.questions = x;
+      });
+      const source = timer(1000, 1000);
+      this.subscribe = source.subscribe(x => {
+        this.seconds = x;
+      });
+    })
   }
 
   stopRecord() {
@@ -123,9 +125,6 @@ export class ProcessInterviewComponent implements OnInit, OnDestroy {
     if (document.hidden) {
       this.makeTimestop('Ушел со вкладки', this.seconds);
       console.log('hidden ', this.seconds);
-    } else {
-      this.makeTimestop('Вернулся со вкладки', this.seconds);
-      console.log('visible ', this.seconds);
     }
   }
 
@@ -147,6 +146,7 @@ export class ProcessInterviewComponent implements OnInit, OnDestroy {
   }
 
   nextQuestion() {
+    this.makeTimestop('Переход на вопрос #' + Number(this.currentQuestionIndex + 1), this.seconds);
     if (this.buttonName == "Done") {
       this.stopRecord();
       this.router.navigate(["interview", "ended"]);

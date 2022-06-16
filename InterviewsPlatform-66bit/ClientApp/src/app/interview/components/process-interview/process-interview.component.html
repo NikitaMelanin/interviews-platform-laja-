@@ -5,6 +5,7 @@
     <div class="text-danger h4" *ngIf="!isScreenWork">An error occurred while trying to start screen recording</div>
     <div *ngIf="isAllWork; else notConfirmedWork">
       <div class="questions">
+        {{currentQuestionIndex + 1}} / {{questions.length}}
         <div class="currentQuestion">
           {{questions[currentQuestionIndex]}}
         </div>

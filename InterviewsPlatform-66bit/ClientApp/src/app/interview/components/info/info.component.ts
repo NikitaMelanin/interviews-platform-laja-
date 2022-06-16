@@ -24,8 +24,8 @@ export class InfoComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.httpClient.get<string>('https://localhost:44423/api/vacancies/candidate/' + this.id).subscribe((x: any) => {
-      this.description = x.description;
+    this.httpClient.get<string>('https://localhost:44423/api/interviews/' + this.id+'/description').subscribe((x: any) => {
+      this.description = x;
     })
   }
 

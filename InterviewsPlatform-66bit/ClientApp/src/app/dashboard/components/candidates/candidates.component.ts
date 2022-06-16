@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
-import {IVacancy} from "../../../_types";
+import {ICandidate, IVacancy} from "../../../_types";
 import {FormControl, FormGroup} from "@angular/forms";
 import {mainRoutes} from "../routes";
 
@@ -11,8 +11,7 @@ import {mainRoutes} from "../routes";
   styleUrls: ['./candidates.component.css']
 })
 export class CandidatesComponent implements OnInit {
-  allVacancies!: IVacancy[];
-  vacancies!: IVacancy[];
+  candidates!: ICandidate[];
   isLoaded = false;
   findForm!: FormGroup;
   filter: string = '';
@@ -25,26 +24,13 @@ export class CandidatesComponent implements OnInit {
 
 
   ngOnInit(): void {
-    this.findForm = new FormGroup({
-      find: new FormControl('')
-    });
-
-    this.http.get<IVacancy[]>('https://localhost:44423/api/vacancies').subscribe((x) => {
-      this.allVacancies = x;
-      this.vacancies = x;
+    this.http.get<ICandidate[]>('https://localhost:44423/api/interviewees').subscribe((x) => {
+      this.candidates = x;
       this.isLoaded = true;
     });
   }
 
   onSubmit() {
-    const value = this.findForm.controls['find'].value.toLocaleLowerCase() || '';
-    if (value === '') {
-      this.vacancies = this.allVacancies;
-      return;
-    }
-    this.vacancies = this.vacancies.filter(x => {
-      return x.name.toLocaleLowerCase().includes(value)
-    });
   }
 
 

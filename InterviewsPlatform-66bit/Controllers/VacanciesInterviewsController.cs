@@ -21,11 +21,11 @@ public class VacanciesInterviewsController : Controller
     {
         this.dbResolver = dbResolver;
         this.dbName = dbName;
-        
+
         vacanciesCollection = dbResolver.GetMongoCollection<VacancyDTO>(dbName, "vacancies");
         interviewsCollection = dbResolver.GetMongoCollection<InterviewDTO>(dbName, "interviews");
     }
-    
+
     [HttpPost]
     [Produces("application/json")]
     public async Task<IActionResult> AddInterview(string id, [FromBody] IntervieweePostDTO intervieweePost) =>
@@ -39,7 +39,8 @@ public class VacanciesInterviewsController : Controller
             {
                 Id = ObjectId.GenerateNewId().ToString(),
                 IntervieweeId = interviewee.Id,
-                PassLink = Guid.NewGuid().ToString()
+                PassLink = Guid.NewGuid().ToString(),
+                TimeStops = Array.Empty<TimeStop>()
             };
 
             var filterVacancy = Builders<VacancyDTO>.Filter.Eq(v => v.Id, id);
@@ -52,7 +53,7 @@ public class VacanciesInterviewsController : Controller
             await intervieweesCollection.UpdateOneAsync(filterInterviewee, updateInterviewee);
 
             await vacanciesCollection.UpdateOneAsync(filterVacancy, updateVacancy);
-            return Ok(interview.Id);
+            return Ok(interview.PassLink);
         }, BadRequest(), NotFound(new {errorText = "Bad id"}));
 
     [HttpGet]

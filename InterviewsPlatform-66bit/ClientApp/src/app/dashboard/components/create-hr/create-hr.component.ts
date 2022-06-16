@@ -1,6 +1,6 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 
-import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
+import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {HttpClient} from "@angular/common/http";
 import {Router} from "@angular/router";
 
@@ -20,19 +20,21 @@ export class CreateHrComponent implements OnInit {
   }
 
   onSubmit() {
-    // this.httpClient.post('https://localhost:44423/api/vacancies', {
-    //   name: this.myForm.value.title,
-    //   description: this.myForm.value.description,
-    //   questions: this.myForm.value.questions?.map((x: { title: string }) => x.title) || [],
-    // }).subscribe(x => {
-    //   this.router.navigate(['vacancies'])
-    // });
+    this.httpClient.post('https://localhost:44423/api/account/register-hr', {
+      name: this.myForm.value.name,
+      login: this.myForm.value.login,
+      surname: this.myForm.value.surname,
+      password: this.myForm.value.password,
+    }).subscribe(x => {
+        this.router.navigate(["/dashboard/vacancies"]);
+    });
   }
 
   ngOnInit(): void {
     this.myForm = this.fb.group({
       password: new FormControl('', [Validators.required]),
       login: new FormControl('', [Validators.required]),
+      surname: new FormControl('', [Validators.required]),
       name: new FormControl('', [Validators.required]),
     });
   }
