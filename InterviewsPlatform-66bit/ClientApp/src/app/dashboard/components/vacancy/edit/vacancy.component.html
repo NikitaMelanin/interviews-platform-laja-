@@ -1,0 +1,48 @@
+<app-dashboard-template
+  [additionalRoutes]="routes"
+  [sideRoutes]="sideRoutes"
+  [body]="body"></app-dashboard-template>
+
+<ng-template #body>
+  <div class="container">
+    <form [formGroup]="myForm" (submit)="onSubmit()">
+      <div class="mb-3">
+        <label for="title" class="form-label">Title</label>
+        <input type="text" class="form-control" formControlName="title" id="title">
+      </div>
+      <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <textarea [disabled]="isLoading" class="form-control" formControlName="description" id="description"
+                  rows="3"></textarea>
+      </div>
+      <div formArrayName="questions">
+        <div class="container" *ngFor="let questionForm of questions.controls; let i = index">
+          <form [formGroup]="$any(questionForm)">
+            <div class="input-group px-3 mb-3">
+              <input [disabled]="isLoading" type="text"
+                     formControlName="title"
+                     class="form-control" placeholder="Question">
+              <span class="btn btn-danger input-group-text" (click)="deleteQuestion(i)">
+              <i class="bi bi-trash">-</i>
+            </span>
+            </div>
+          </form>
+        </div>
+        <button class="btn btn-dark my-1" (click)="addQuestion()">
+          <i class="bi bi-plus">Add new question</i>
+        </button>
+      </div>
+      <button type="submit" class="btn btn-outline-success" [ngClass]="{'disabled': isLoading}"
+              [disabled]="!myForm.valid || isLoading">
+        <i class="bi bi-pen"></i>
+        Save
+      </button>
+    </form>
+    <button type="submit" class="btn btn-danger my-5 text-end" [ngClass]="{'disabled': isLoading}"
+            [disabled]="isLoading" (click)="deleteVacancy()">
+      <i class="bi bi-pen"></i>
+      Delete vacancy
+    </button>
+
+  </div>
+</ng-template>

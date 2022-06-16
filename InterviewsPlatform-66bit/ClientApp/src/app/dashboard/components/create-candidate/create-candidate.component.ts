@@ -4,20 +4,19 @@ import {HttpClient} from "@angular/common/http";
 import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
-  selector: 'app-start-interview',
-  templateUrl: './start-interview.component.html',
-  styleUrls: ['./start-interview.component.css'],
+  selector: 'app-create-component',
+  templateUrl: './create-candidate.component.html',
+  styleUrls: ['./create-candidate.component.css'],
   providers: []
-
 })
 
 
-export class StartInterviewComponent implements OnInit, OnDestroy {
+export class CreateCandidateComponent implements OnInit, OnDestroy {
   myForm!: FormGroup;
   id!: string;
 
-  constructor(private httpClient: HttpClient, private route: ActivatedRoute, private readonly router: Router) {
-    this.id = this.route.snapshot.paramMap.get('id')!;
+  constructor(private httpClient: HttpClient, private route: ActivatedRoute) {
+    this.id = this.route.snapshot.paramMap.get('vacancyId')!;
   }
 
   onSubmit() {
@@ -28,7 +27,6 @@ export class StartInterviewComponent implements OnInit, OnDestroy {
       email: this.myForm.value.email,
       phone: this.myForm.value.phone,
     }).subscribe(x => {
-      this.router.navigate(['interview', x]);
       console.log('Starting interview');
     });
   }

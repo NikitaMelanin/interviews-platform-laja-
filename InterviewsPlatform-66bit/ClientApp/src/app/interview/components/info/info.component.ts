@@ -20,12 +20,12 @@ export class InfoComponent implements OnInit, OnDestroy {
   }
 
   onSubmit() {
-    this.router.navigate(['interview', this.id, 'start']);
+    this.router.navigate([this.id, 'process']);
   }
 
   ngOnInit(): void {
-    this.httpClient.get<string>('https://localhost:44423/api/vacancies/' + this.id + '/description').subscribe((x: string) => {
-      this.description = x;
+    this.httpClient.get<string>('https://localhost:44423/api/vacancies/candidate/' + this.id).subscribe((x: any) => {
+      this.description = x.description;
     })
   }
 

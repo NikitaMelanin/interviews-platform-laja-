@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {IVacancy} from "../../../_types";
 import {FormControl, FormGroup} from "@angular/forms";
-
+import {mainRoutes} from "../routes";
 
 @Component({
   selector: 'app-nav-menu',
@@ -15,6 +15,8 @@ export class VacanciesComponent implements OnInit {
   isLoaded = false;
   findForm!: FormGroup;
   filter: string = '';
+  sideRoutes = mainRoutes.filter(x => x.side);
+  routes = mainRoutes.filter(x => !x.side);
 
   constructor(private readonly http: HttpClient) {
   }
