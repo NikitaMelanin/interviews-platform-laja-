@@ -86,6 +86,11 @@ public class AccountController : Controller
 
             var user = (await usersCollection.FindAsync(filter)).Single();
 
+            if (user.Roles.Contains(Roles.ADMINISTRATOR))
+            {
+                return Forbid();
+            }
+
             var deleteFilter = Builders<UserDTO>.Filter.Eq(u => u.Id, user.Id);
 
             await usersCollection.DeleteOneAsync(deleteFilter);
