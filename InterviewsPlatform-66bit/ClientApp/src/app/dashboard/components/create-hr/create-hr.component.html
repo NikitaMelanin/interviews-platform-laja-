@@ -1,22 +1,25 @@
 <div class="container bg-white p-3 rounded-3 shadow-sm" style="width: 40%">
   <form [formGroup]="myForm" (submit)="onSubmit()">
-    <h1>Создание HR аккаунта</h1>
-    <div class="mb-3">
-      <label for="login" class="form-label">Логин</label>
+    <div class="data-header">
+      <h2 class="h2">Контактные данные</h2>
+    </div>
+    <div class="input-form">
+      <label for="login" class="label-form">Логин</label>
       <input type="text" class="form-control" formControlName="login" id="login">
     </div>
-    <div class="mb-3">
-      <label for="password" class="form-label">Пароль</label>
-      <input type="text" class="form-control" formControlName="password" id="password">
+    <div class="input-form">
+      <label for="password" class="label-form">Пароль</label>
+      <input type="password" class="form-control" formControlName="password" id="password">
     </div>
-    <div class="mb-3">
-      <label for="name" class="form-label">ФИО</label>
+    <div class="input-form">
+      <label for="name" class="label-form">ФИО</label>
       <input type="text" class="form-control" formControlName="name" id="name">
     </div>
-    <button type="submit" class="btn btn-outline-success"
+  </form>
+  <div class="form-buttons">
+    <button type="submit" class="accept-button" (click)="onSubmit()"
             [disabled]="!myForm.valid">
-      <i class="bi bi-pen"></i>
       Создать
     </button>
-  </form>
+  </div>
 </div>

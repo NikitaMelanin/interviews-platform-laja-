@@ -1,45 +1,70 @@
-a.navbar-brand {
-  white-space: normal;
-  text-align: center;
-  word-break: break-all;
+/* *{width: 100%;}  */
+.container {
+  background-color: white;
+  padding-top: 10px;
 }
 
-html {
-  font-size: 14px;
-}
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+h2 {
+  color: rgba(52, 58, 64, 1);
+  border-bottom: 1px solid #8f979c;
+  font-weight: 400;
 }
 
-.box-shadow {
-  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
-}
-
-header {
+.input-form {
+  padding: 20px;
   width: 100%;
-  display: block;
-  overflow: hidden;
 }
 
-header a {
-  box-sizing: border-box;
-  border-radius: 4px;
-  padding: 10px;
+.half-width {
+  width: 50%;
 }
 
-header a:hover {
-  background-color: #ddd;
-  color: black;
+.label-form {
+  font-weight: 500;
+  font-size: 18px;
+  margin-bottom: 10px;
 }
 
-.navbar-nav {
-  align-items: center;
-  padding: 10px;
+input {
+  box-shadow: 3px 3px 11px rgba(0, 0, 0, 0.25);
+  border: 0;
+  border-radius: 0;
+  padding: 15px;
+  padding-left: 20px;
+}
+
+textarea {
+  box-shadow: 3px 3px 11px rgba(0, 0, 0, 0.25);
+  border: 0;
+  border-radius: 0;
+}
+
+span {
   display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-header a:active {
-  background-color: rgb(145, 150, 153);
+.form-buttons {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+}
+
+.accept-button {
+  background: #1A86FB;
+  color: white;
+  border: 0;
+  width: 20%;
+  height: 40px;
+}
+
+.accept-button:disabled {
+  opacity: 0.5;
+}
+
+.red {
+  background-color: #dc3545;
 }

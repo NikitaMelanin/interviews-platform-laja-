@@ -1,20 +1,66 @@
 /* *{width: 100%;}  */
- video{
-   max-width: 20em;
-   min-height: 10em;
-   border: 1px solid rgb(0, 0, 0);
-
+.container {
+  background-color: white;
+  padding-top: 10px;
 }
 
-.buttonName {
-   color: rgb(0, 0, 0);
-   margin: 0 auto;
-   text-align: center
+h2 {
+  color: rgba(52, 58, 64, 1);
+  border-bottom: 1px solid #8f979c;
+  font-weight: 400;
 }
 
-.currentQuestion{
-   max-width: 50em;
-   min-height: 10em;
-   margin: 0 auto;
-   text-align: center
+.input-form {
+  padding: 20px;
+  width: 100%;
+}
+
+.half-width {
+  width: 50%;
+}
+
+.label-form {
+  font-weight: 500;
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+input {
+  box-shadow: 3px 3px 11px rgba(0, 0, 0, 0.25);
+  border: 0;
+  border-radius: 0;
+  padding: 15px;
+  padding-left: 20px;
+}
+
+textarea {
+  box-shadow: 3px 3px 11px rgba(0, 0, 0, 0.25);
+  border: 0;
+  border-radius: 0;
+}
+
+span {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.form-buttons {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+}
+
+.accept-button {
+  background: #1A86FB;
+  color: white;
+  border: 0;
+  width: 20%;
+  height: 40px;
+}
+
+.accept-button:disabled {
+  opacity: 0.5;
 }

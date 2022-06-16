@@ -5,44 +5,45 @@
 
 <ng-template #body>
   <div class="container">
+    <h2 class="h2">Вакансия {{myForm.controls['title'].value}}</h2>
     <form [formGroup]="myForm" (submit)="onSubmit()">
-      <div class="mb-3">
-        <label for="title" class="form-label">Title</label>
-        <input type="text" class="form-control" formControlName="title" id="title">
+      <div class="half-width input-form">
+        <label for="title" class="label-form">Название</label>
+        <input type="text" class="form-control" formControlName="title" id="title" placeholder="Введите название новой вакансии">
       </div>
-      <div class="mb-3">
-        <label for="description" class="form-label">Description</label>
-        <textarea [disabled]="isLoading" class="form-control" formControlName="description" id="description"
+      <div class="input-form">
+        <label for="description" class="label-form">Описание</label>
+        <textarea class="form-control" formControlName="description" id="description" placeholder="Описание вакансии"
                   rows="3"></textarea>
       </div>
       <div formArrayName="questions">
         <div class="container" *ngFor="let questionForm of questions.controls; let i = index">
           <form [formGroup]="$any(questionForm)">
             <div class="input-group px-3 mb-3">
-              <input [disabled]="isLoading" type="text"
+              <input type="text"
                      formControlName="title"
-                     class="form-control" placeholder="Question">
+                     class="form-control" placeholder="Введите вопрос">
               <span class="btn btn-danger input-group-text" (click)="deleteQuestion(i)">
-              <i class="bi bi-trash">-</i>
+               X
             </span>
             </div>
           </form>
         </div>
-        <button class="btn btn-dark my-1" (click)="addQuestion()">
-          <i class="bi bi-plus">Add new question</i>
-        </button>
       </div>
-      <button type="submit" class="btn btn-outline-success" [ngClass]="{'disabled': isLoading}"
-              [disabled]="!myForm.valid || isLoading">
-        <i class="bi bi-pen"></i>
-        Save
-      </button>
     </form>
-    <button type="submit" class="btn btn-danger my-5 text-end" [ngClass]="{'disabled': isLoading}"
-            [disabled]="isLoading" (click)="deleteVacancy()">
-      <i class="bi bi-pen"></i>
-      Delete vacancy
-    </button>
-
+    <div class="form-buttons">
+      <button class="accept-button" (click)="addQuestion()">
+        Добавить новый вопрос
+      </button>
+      <button type="submit" class="accept-button" (click)="onSubmit()"
+              [disabled]="!myForm.valid">
+        Сохранить
+      </button>
+      <button type="submit" class="red accept-button" [ngClass]="{'disabled': isLoading}"
+              [disabled]="isLoading" (click)="deleteVacancy()">
+        <i class="bi bi-pen"></i>
+        Удалить вакансию
+      </button>
+    </div>
   </div>
 </ng-template>

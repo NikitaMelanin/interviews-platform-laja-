@@ -35,8 +35,8 @@ export class CreateVacancyComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.myForm = this.fb.group({
-      title: ['', []],
-      description: ['', []],
+      title: ['', [Validators.required]],
+      description: ['', [Validators.required]],
       questions: this.fb.array([])
     });
   }
