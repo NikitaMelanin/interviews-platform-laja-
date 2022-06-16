@@ -33,6 +33,7 @@
 
     <ItemGroup>
       <Folder Include="ClientApp\.angular" />
+      <Folder Include="ClientApp\src\assets\png" />
       <Folder Include="wwwroot\videos" />
     </ItemGroup>
 
