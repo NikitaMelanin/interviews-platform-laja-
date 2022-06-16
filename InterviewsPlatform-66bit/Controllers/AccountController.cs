@@ -98,4 +98,20 @@ public class AccountController : Controller
             return NoContent();
         }, BadRequest(), NotFound(new {errorText = "Bad login"}));
 
+    [HttpGet]
+    [Route("roles")]
+    [Produces("application/json")]
+    public async Task<IActionResult> RolesOfCurrentUser()
+        => await DbExceptionsHandler.HandleAsync(async () =>
+        {
+            var id = User.Identity!.Name!;
+
+            var usersCollection = dbResolver.GetMongoCollection<UserDTO>(dbName, "users");
+
+            var filter = Builders<UserDTO>.Filter.Eq(u => u.Id, id);
+
+            var user = (await usersCollection.FindAsync(filter)).Single();
+
+            return Ok(user.Roles);
+        }, BadRequest(), NotFound(new {errorText = "How did you logined?"}));
 }
