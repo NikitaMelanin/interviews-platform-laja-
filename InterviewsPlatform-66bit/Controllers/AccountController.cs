@@ -59,16 +59,13 @@ public class AccountController : Controller
         {
             var usersCollection = dbResolver.GetMongoCollection<UserDTO>(dbName, "users");
 
-            var filterBuilder = Builders<UserDTO>.Filter;
-
-            var filter = filterBuilder.Eq(u => u.Login, userPostDto.Login) &
-                         filterBuilder.Eq(u => u.Password, userPostDto.Password);
+            var filter = Builders<UserDTO>.Filter.Eq(u => u.Login, userPostDto.Login);
 
             var users = await usersCollection.FindAsync(filter);
 
             if (await users.AnyAsync())
             {
-                return Conflict(new {errorText = "User with this login and password already registered"});
+                return Conflict(new {errorText = "User with this login already registered"});
             }
 
             var user = new UserDTO(userPostDto) {Roles = new[] {Roles.HR}};
@@ -77,4 +74,23 @@ public class AccountController : Controller
 
             return Ok(user.Id);
         }, BadRequest(), NotFound());
+
+    [HttpDelete]
+    [Authorize(Roles = Roles.ADMINISTRATOR)]
+    public async Task<IActionResult> DeleteAccount(string loginToDelete)
+        => await DbExceptionsHandler.HandleAsync(async () =>
+        {
+            var usersCollection = dbResolver.GetMongoCollection<UserDTO>(dbName, "users");
+
+            var filter = Builders<UserDTO>.Filter.Eq(u => u.Login, loginToDelete);
+
+            var user = (await usersCollection.FindAsync(filter)).Single();
+
+            var deleteFilter = Builders<UserDTO>.Filter.Eq(u => u.Id, user.Id);
+
+            await usersCollection.DeleteOneAsync(deleteFilter);
+                
+            return NoContent();
+        }, BadRequest(), NotFound(new {errorText = "Bad login"}));
+
 }
