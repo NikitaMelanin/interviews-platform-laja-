@@ -32,13 +32,14 @@ public class VacanciesInterviewsController : Controller
         await DbExceptionsHandler.HandleAsync(async () =>
         {
             var intervieweesCollection = dbResolver.GetMongoCollection<IntervieweeDTO>(dbName, "interviewees");
-            
+
             var interviewee = await FindAndUpdateOrInsertIntervieweeAsync(intervieweesCollection, intervieweePost);
 
             var interview = new InterviewDTO
             {
                 Id = ObjectId.GenerateNewId().ToString(),
-                IntervieweeId = interviewee.Id
+                IntervieweeId = interviewee.Id,
+                PassLink = Guid.NewGuid().ToString()
             };
 
             var filterVacancy = Builders<VacancyDTO>.Filter.Eq(v => v.Id, id);
@@ -51,7 +52,6 @@ public class VacanciesInterviewsController : Controller
             await intervieweesCollection.UpdateOneAsync(filterInterviewee, updateInterviewee);
 
             await vacanciesCollection.UpdateOneAsync(filterVacancy, updateVacancy);
-
             return Ok(interview.Id);
         }, BadRequest(), NotFound(new {errorText = "Bad id"}));
 
@@ -68,7 +68,7 @@ public class VacanciesInterviewsController : Controller
             foreach (var interviewId in vacancy.Interviews)
             {
                 var interviewFilter = Builders<InterviewDTO>.Filter.Eq(i => i.Id, interviewId);
-                
+
                 interviews.Add((await interviewsCollection.FindAsync(interviewFilter)).Single());
             }
 

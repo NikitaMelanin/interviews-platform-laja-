@@ -7,3 +7,13 @@ export interface IVacancy {
   questions: string[];
   interviews: string[];
 }
+
+
+export interface IInterview {
+  id: string;
+  intervieweeId: string;
+  timeStops: string[];
+  videoId: string;
+  passLink: string;
+  screenVideoId: string;
+}

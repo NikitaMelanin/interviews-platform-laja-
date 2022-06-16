@@ -1,4 +1,4 @@
-<app-dashboard-template [body]="body"></app-dashboard-template>
+<app-dashboard-template [additionalRoutes]="routes" [sideRoutes]="sideRoutes" [body]="body"></app-dashboard-template>
 
 <ng-template #body>
   <form [formGroup]="findForm" (ngSubmit)="onSubmit()">
@@ -13,7 +13,7 @@
         <div class="card-body">
           <h2 class="card-title">{{vacancy.name}}</h2>
           <p class="card-text">{{vacancy.description | slice:0:100}}</p>
-          <a class="btn btn-danger" [routerLink]="['/vacancies/vacancy/'+vacancy.id+'/edit']">Edit</a>
+          <a class="btn btn-primary" [routerLink]="['/dashboard/vacancy/'+vacancy.id+'/main']">Просмотр/Редактирование</a>
         </div>
       </div>
     </div>

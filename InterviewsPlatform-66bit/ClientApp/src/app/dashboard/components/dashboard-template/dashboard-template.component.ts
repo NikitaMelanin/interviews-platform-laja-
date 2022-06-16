@@ -1,5 +1,6 @@
 import {Component, Input, OnInit, TemplateRef} from '@angular/core';
 import {FormControl, FormGroup} from "@angular/forms";
+import {IRoute} from "../routes";
 
 
 @Component({
@@ -9,31 +10,15 @@ import {FormControl, FormGroup} from "@angular/forms";
   styleUrls: ['./dashboard-template.component.css']
 })
 export class DashboardTemplateComponent implements OnInit {
-  findForm!: FormGroup;
-  filter: string = '';
 
   @Input() body!: TemplateRef<any>;
+  @Input() sideRoutes!: IRoute[];
+  @Input() additionalRoutes!: IRoute[];
 
   constructor() {
   }
 
 
   ngOnInit(): void {
-    this.findForm = new FormGroup({
-      find: new FormControl('')
-    });
   }
-
-  onSubmit() {
-    // const value = this.findForm.controls['find'].value.toLocaleLowerCase() || '';
-    // if (value === '') {
-    //   this.vacancies = this.allVacancies;
-    //   return;
-    // }
-    // this.vacancies = this.vacancies.filter(x => {
-    //   return x.name.toLocaleLowerCase().includes(value)
-    // });
-  }
-
-
 }

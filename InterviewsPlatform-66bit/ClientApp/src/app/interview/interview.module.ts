@@ -8,6 +8,7 @@ import {EndInterviewComponent} from "./components/end-interview/end-interview.co
 import {ReactiveFormsModule} from "@angular/forms";
 import {MatButtonModule} from "@angular/material/button";
 import {InfoComponent} from "./components/info/info.component";
+import {startInterview} from '../_extraRoutes';
 
 
 @NgModule({
@@ -18,10 +19,8 @@ import {InfoComponent} from "./components/info/info.component";
   imports: [
     CommonModule,
     RouterModule.forChild([
-      // {path: ':id/introduction', component: ProcessInterviewComponent, pathMatch: 'full', canActivate: []},
       {path: 'ended', component: EndInterviewComponent, pathMatch: 'full', canActivate: []},
-      {path: ':passLink/info', component: InfoComponent, pathMatch: 'full', canActivate: []},
-      {path: ':passLink/start', component: StartInterviewComponent, pathMatch: 'full', canActivate: []},
+      {path: startInterview('').default, component: InfoComponent, pathMatch: 'full', canActivate: []},
       {path: ':id/process', component: ProcessInterviewComponent, pathMatch: 'full', canActivate: []},
     ]),
     ReactiveFormsModule,

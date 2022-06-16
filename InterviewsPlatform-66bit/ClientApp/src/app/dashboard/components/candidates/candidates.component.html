@@ -1,37 +1,42 @@
-<app-dashboard-template [body]="fake"></app-dashboard-template>
+<app-dashboard-template
+  [sideRoutes]="sideRoutes"
+  [additionalRoutes]="routes"
+  [body]="body"></app-dashboard-template>
 
-<ng-template #fake>
-  <form [formGroup]="findForm" (ngSubmit)="onSubmit()">
-    <div class="input-group mb-3">
-      <input type="text" formControlName="find" class="form-control" placeholder="Поиск вакансии по заголовку">
-      <button class="btn btn-primary" type="submit" id="find-button">Поиск</button>
-    </div>
-  </form>
-  <div class="row">
-    <div class="col-4">
-      <div class="card">
-        <div class="card-body">
-          <h2 class="card-title">BLA BLA</h2>
-          <p class="card-text">TOM</p>
-          <a class="btn btn-danger">Edit</a>
+<ng-template #body>
+  <div class="container">
+    <form [formGroup]="findForm" (ngSubmit)="onSubmit()">
+      <div class="input-group mb-3">
+        <input type="text" formControlName="find" class="form-control" placeholder="Поиск вакансии по заголовку">
+        <button class="btn btn-primary" type="submit" id="find-button">Поиск</button>
+      </div>
+    </form>
+    <div class="row">
+      <div class="col-4">
+        <div class="card">
+          <div class="card-body">
+            <h2 class="card-title">BLA BLA</h2>
+            <p class="card-text">TOM</p>
+            <a class="btn btn-danger">Edit</a>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="col-4">
-      <div class="card">
-        <div class="card-body">
-          <h2 class="card-title">BLA BLA</h2>
-          <p class="card-text">TOM</p>
-          <a class="btn btn-danger">Edit</a>
+      <div class="col-4">
+        <div class="card">
+          <div class="card-body">
+            <h2 class="card-title">BLA BLA</h2>
+            <p class="card-text">TOM</p>
+            <a class="btn btn-danger">Edit</a>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="col-4">
-      <div class="card">
-        <div class="card-body">
-          <h2 class="card-title">BLA BLA</h2>
-          <p class="card-text">TOM</p>
-          <a class="btn btn-danger">Edit</a>
+      <div class="col-4">
+        <div class="card">
+          <div class="card-body">
+            <h2 class="card-title">BLA BLA</h2>
+            <p class="card-text">TOM</p>
+            <a class="btn btn-danger">Edit</a>
+          </div>
         </div>
       </div>
     </div>

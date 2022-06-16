@@ -18,7 +18,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 
   onSubmit() {
     this.authService.logIn(this.myForm.value.login, this.myForm.value.password).subscribe(x => {
-      this.router.navigate(['vacancies']);
+      this.router.navigate(['dashboard/vacancies']);
     });
   }
 

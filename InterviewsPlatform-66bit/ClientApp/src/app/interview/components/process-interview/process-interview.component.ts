@@ -104,6 +104,9 @@ export class ProcessInterviewComponent implements OnInit, OnDestroy {
     if (this.videoToRecord) {
       this.videoToRecord.getVideoTracks().forEach(x => x.stop());
     }
+    if (this.screenVideo) {
+      this.screenVideo.getVideoTracks().forEach(x => x.stop());
+    }
     this.subscribe.unsubscribe();
   }
 

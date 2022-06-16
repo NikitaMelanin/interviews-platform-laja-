@@ -2,18 +2,22 @@ import {Component} from '@angular/core';
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {HttpClient} from "@angular/common/http";
 import {ActivatedRoute, Router} from "@angular/router";
+import {IRoute, mainRoutes, vacancyRoutes} from "../../routes";
 
 @Component({
   selector: 'app-nav-menu',
-  templateUrl: './vacancy-edit.component.html',
-  styleUrls: ['./vacancy-edit.component.css']
+  templateUrl: './vacancy.component.html',
+  styleUrls: ['./vacancy.component.css']
 })
-export class VacancyEditComponent {
+export class VacancyComponent {
   myForm!: FormGroup;
   id!: string;
 
   isLoading = true;
   passingLink = '';
+
+  sideRoutes: IRoute[] = [];
+  routes: IRoute[] = [];
 
   get questions() {
     return this.myForm.controls["questions"] as FormArray;
@@ -44,6 +48,7 @@ export class VacancyEditComponent {
       return;
     }
     this.id = id as string;
+    this.sideRoutes = vacancyRoutes(this.id).filter(x => x.side);
     this.myForm = this.fb.group({
       title: '',
       description: '',
@@ -67,8 +72,8 @@ export class VacancyEditComponent {
     // this.httpClient
     //   .delete("https://localhost:44423/api/vacancies/" + this.id, {})
     //   .subscribe((x: any) => {
-        this.router.navigate(['vacancies']);
-      // });
+    this.router.navigate(['vacancies']);
+    // });
   }
 
   addQuestion(question = '') {

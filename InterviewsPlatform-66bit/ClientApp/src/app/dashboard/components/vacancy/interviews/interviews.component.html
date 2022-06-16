@@ -1,0 +1,29 @@
+<app-dashboard-template
+  [additionalRoutes]="routes"
+  [sideRoutes]="sideRoutes"
+  [body]="body"></app-dashboard-template>
+
+<ng-template #body>
+  <div class="container">
+    <div class="row">
+      <div *ngIf="interviews && interviews.length == 0">Не найдено</div>
+      <div class="col-4">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Ваше новое интервью!</h5>
+            <div class="btn btn-primary" [routerLink]="['/dashboard/vacancy/'+id+'/interview/create']">Создать</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-4" *ngFor="let interview of interviews">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">{{interview.id}}</h5>
+            <h5 class="card-title">Событий: {{interview.timeStops.length}}</h5>
+            <div class="btn btn-primary" [routerLink]="['/dashboard/interview/'+interview.id+'/main']">Просмотр</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
