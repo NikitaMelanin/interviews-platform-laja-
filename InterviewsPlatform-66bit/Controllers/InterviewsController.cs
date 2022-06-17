@@ -64,7 +64,7 @@ public class InterviewsController : Controller
         => await DbExceptionsHandler.HandleAsync(async () =>
         {
             var filter = Builders<InterviewDTO>.Filter.Eq(i => i.PassLink, passLink);
-            var update = Builders<InterviewDTO>.Update.Set(i => i.TimeStops, new TimeStop[] { });
+            var update = Builders<InterviewDTO>.Update.Set(i => i.TimeStops, Array.Empty<TimeStop>());
 
             await collection.FindOneAndUpdateAsync(filter, update);
 
