@@ -3,11 +3,15 @@
   height: 100%;
   margin: 15px 0 0 15px;
   align-items: center;
+  overflow: hidden;
+  word-wrap: break-word;
+  position: relative;
 }
 
 .card {
   display: flex;
   align-items: center;
+
 }
 .card h1 {
   margin-top: 20px;
@@ -17,22 +21,25 @@
   font-style: normal;
   font-size: 30px;
   line-height: 33px;
+
 }
 .logo {
   margin-top: 80px;
   width: 436px;
   height: 158px;
+
 }
 
 .bi-border-right {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0px 20px 20px;
+  padding: 0 20px 20px;
   gap: 30px;
   text-align: center;
   width: 845px;
   height:100%;
+
 }
 .bi-border-right h2 {
   font-family: 'Poppins', sans-serif;
@@ -43,5 +50,6 @@
   align-items: center;
   order: 0;
   flex-grow: 0;
+
 }
 
