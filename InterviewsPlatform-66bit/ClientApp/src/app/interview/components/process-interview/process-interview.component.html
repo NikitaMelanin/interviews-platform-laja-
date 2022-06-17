@@ -4,10 +4,14 @@
     <div class="text-danger h4" *ngIf="!isCameraWork">An error occurred while trying to record the webcam</div>
     <div class="text-danger h4" *ngIf="!isScreenWork">An error occurred while trying to start screen recording</div>
     <div *ngIf="isAllWork; else notConfirmedWork">
-      <div class="questions">
+      <div class="card-body container questions">
         {{currentQuestionIndex + 1}} / {{questions.length}}
-        <div class="currentQuestion">
-          {{questions[currentQuestionIndex]}}
+        <div class="card-body container currentQuestion">
+          <mat-card>
+            <mat-card-title>
+              {{questions[currentQuestionIndex]}}
+            </mat-card-title>
+          </mat-card>
         </div>
       </div>
       <div class="buttonName">

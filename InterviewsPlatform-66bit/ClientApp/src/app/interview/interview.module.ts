@@ -9,6 +9,7 @@ import {ReactiveFormsModule} from "@angular/forms";
 import {MatButtonModule} from "@angular/material/button";
 import {InfoComponent} from "./components/info/info.component";
 import {startInterview} from '../_extraRoutes';
+import {MatCardModule} from "@angular/material/card";
 
 
 @NgModule({
@@ -16,16 +17,17 @@ import {startInterview} from '../_extraRoutes';
   exports: [
     VideoComponent
   ],
-  imports: [
-    CommonModule,
-    RouterModule.forChild([
-      {path: 'ended', component: EndInterviewComponent, pathMatch: 'full', canActivate: []},
-      {path: startInterview('').default, component: InfoComponent, pathMatch: 'full', canActivate: []},
-      {path: ':id/process', component: ProcessInterviewComponent, pathMatch: 'full', canActivate: []},
-    ]),
-    ReactiveFormsModule,
-    MatButtonModule
-  ]
+    imports: [
+        CommonModule,
+        RouterModule.forChild([
+            {path: 'ended', component: EndInterviewComponent, pathMatch: 'full', canActivate: []},
+            {path: startInterview('').default, component: InfoComponent, pathMatch: 'full', canActivate: []},
+            {path: ':id/process', component: ProcessInterviewComponent, pathMatch: 'full', canActivate: []},
+        ]),
+        ReactiveFormsModule,
+        MatButtonModule,
+        MatCardModule
+    ]
 })
 export class InterviewModule {
 }
