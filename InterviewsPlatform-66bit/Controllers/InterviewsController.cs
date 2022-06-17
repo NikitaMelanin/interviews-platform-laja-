@@ -8,7 +8,7 @@ using MongoDB.Driver;
 
 namespace InterviewsPlatform_66bit.Controllers;
 
-//[Authorize(Roles = $"{Roles.ADMINISTRATOR},{Roles.HR}")]
+[Authorize(Roles = $"{Roles.ADMINISTRATOR},{Roles.HR}")]
 [Route("/interviews")]
 public class InterviewsController : Controller
 {
@@ -45,8 +45,8 @@ public class InterviewsController : Controller
     [AllowAnonymous]
     [Route("{passLink}/time-stops")]
     [Produces("application/json")]
-    public async Task<IActionResult> AddTimeStops(string passLink, [FromBody] TimeStopDTO times) =>
-        await DbExceptionsHandler.HandleAsync(async () =>
+    public async Task<IActionResult> AddTimeStops(string passLink, [FromBody] TimeStopDTO times) 
+        => await DbExceptionsHandler.HandleAsync(async () =>
         {
             var filter = Builders<InterviewDTO>.Filter.Eq(i => i.PassLink, passLink);
             var update = Builders<InterviewDTO>.Update.PushEach(i => i.TimeStops, times.TimeStops);
@@ -60,8 +60,8 @@ public class InterviewsController : Controller
     [AllowAnonymous]
     [Route("{passLink}/time-stops/reset")]
     [Produces("application/json")]
-    public async Task<IActionResult> ResetTimeStops(string passLink, [FromBody] TimeStopDTO times) =>
-        await DbExceptionsHandler.HandleAsync(async () =>
+    public async Task<IActionResult> ResetTimeStops(string passLink, [FromBody] TimeStopDTO times)
+        => await DbExceptionsHandler.HandleAsync(async () =>
         {
             var filter = Builders<InterviewDTO>.Filter.Eq(i => i.PassLink, passLink);
             var update = Builders<InterviewDTO>.Update.Set(i => i.TimeStops, new TimeStop[] { });
@@ -74,8 +74,8 @@ public class InterviewsController : Controller
     [HttpGet]
     [Route("{id}")]
     [Produces("application/json")]
-    public async Task<IActionResult> Read(string id) =>
-        await DbExceptionsHandler.HandleAsync(async () =>
+    public async Task<IActionResult> Read(string id) 
+        => await DbExceptionsHandler.HandleAsync(async () =>
         {
             var filter = Builders<InterviewDTO>.Filter.Eq(i => i.Id, id);
 

@@ -39,8 +39,8 @@ public class VacanciesController : Controller
     [HttpPatch]
     [Route("{id}")]
     [Produces("application/json")]
-    public async Task<IActionResult> Update(string id, [FromBody] VacancyPostDTO postDto) =>
-        await DbExceptionsHandler.HandleAsync(async () =>
+    public async Task<IActionResult> Update(string id, [FromBody] VacancyPostDTO postDto) 
+        => await DbExceptionsHandler.HandleAsync(async () =>
         {
             var update = Builders<VacancyDTO>.Update
                 .Set(v => v.Name, postDto.Name)
@@ -78,8 +78,8 @@ public class VacanciesController : Controller
     [HttpGet]
     [Route("{id}")]
     [Produces("application/json")]
-    public async Task<IActionResult> Read(string id) =>
-        await DbExceptionsHandler.HandleAsync(async () =>
+    public async Task<IActionResult> Read(string id)
+        => await DbExceptionsHandler.HandleAsync(async () =>
         {
             var filter = Builders<VacancyDTO>.Filter.Eq(v => v.Id, id);
 
@@ -90,8 +90,8 @@ public class VacanciesController : Controller
 
     [HttpDelete]
     [Route("{id}")]
-    public async Task<IActionResult> Delete(string id) =>
-        await DbExceptionsHandler.HandleAsync(async () =>
+    public async Task<IActionResult> Delete(string id) 
+        => await DbExceptionsHandler.HandleAsync(async () =>
         {
             var filter = Builders<VacancyDTO>.Filter.Eq(v => v.Id, id);
             
@@ -115,17 +115,4 @@ public class VacanciesController : Controller
 
             return NoContent();
         }, BadRequest(), NotFound(new {errorText = "Bad id"}));
-
-    // [HttpGet]
-    // [Route("{passLink}/questions")]
-    // [Produces("application/json")]
-    // public async Task<IActionResult> Questions(string passLink)
-    //     => await DbExceptionsHandler.HandleAsync(async () =>
-    //     {
-    //         var filter = Builders<VacancyDTO>.Filter.Eq(v => v.PassLink, passLink);
-    //
-    //         var vacancy = (await collection.FindAsync(filter)).Single();
-    //
-    //         return Ok(vacancy.Questions);
-    //     }, BadRequest(), NotFound(new {errorText = "Bad pass link"}));
 }
